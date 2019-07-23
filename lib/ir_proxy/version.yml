@@ -6,8 +6,8 @@ authors: ['Dimitri Arrigoni']
 email: 'dimitri@arrigoni.me'
 date: '2019-07-23'
 summary: 'Proxy for ir-keytable'
-description: 'A simple init scheme for Unix-like operating systems that initializes processes'
-homepage: 'https://github.com/SwagDevOps/ylem'
+description: 'A simple proxy propagating event seen through ir-keytable'
+homepage: 'https://github.com/SwagDevOps/ir-proxy'
 licenses: ['GPL-3.0']
 license_header: |
   Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
