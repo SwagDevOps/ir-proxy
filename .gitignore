@@ -1,0 +1,12 @@
+*.gem
+*.swp
+*_flymake.*
+*~
+/**/.*
+/build/
+/cache/
+/doc/
+/vendor/
+!/.env
+!/.gitignore
+!/.solargraph.yml
