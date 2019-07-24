@@ -29,6 +29,8 @@ module IrProxy
   # @formatter:off
   {
     VERSION: 'version',
+    Cli: 'cli',
+    Pipe: 'pipe',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("ir_proxy/#{fp}")) }
   # @formatter:on
 
