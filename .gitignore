@@ -9,5 +9,6 @@
 /vendor/
 !/.env
 !/.gitignore
+!/.rubocop.yml
 !/.solargraph.yml
 !/.yardopts
