@@ -32,7 +32,7 @@ class IrProxy::Pipe::Stream
   #
   # @return [String]
   def line
-    buffer.join('').tap { buffer.clear }
+    buffer.join('').chomp.tap { buffer.clear }
   end
 
   # @return [IO]
