@@ -13,9 +13,9 @@ require_relative '../ir_proxy'
 # Mostly an entry-point for CLI.
 class IrProxy::Cli
   def call
-    puts 'Hello world'
+    IrProxy::Pipe.new.tap(&:call)
 
-    return 0
+    0
   end
 
   class << self
