@@ -10,41 +10,30 @@ require_relative '../ir_proxy'
 
 # Process input read from ``STDIN``
 class IrProxy::Pipe
+  # @formatter:off
+  {
+    Stream: 'stream',
+  }.each { |s, fp| autoload(s, "#{__dir__}/pipe/#{fp}") }
+  # @formatter:on
+
   def initialize(stream = $stdin)
-    @stream = stream
-    @buffer = []
+    @stream = Stream.new(stream)
   end
 
   def call
-    stream.sync = true
     Thread.new do
-      listen { |line| process_line(line) }
+      stream.listen { |line| process_line(line) }
     end.join
   end
 
   protected
 
-  def listen
-    until stream.eof
-      char = stream.read_nonblock(1)
-      buffer.push(char)
-      next if char != "\n"
-
-      line = buffer.join('')
-      buffer.clear
-      yield(line)
-    end
-  rescue IO::EAGAINWaitReadable
-    retry
-  end
-
   # @tddo write real implementation
   def process_line(line)
     $stdout.puts(line)
-    $stdout.flush
   end
 
-  # @return [IO]
+  # @return [Stream]
   attr_reader :stream
 
   # @return [Array<String>]
