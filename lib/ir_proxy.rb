@@ -30,6 +30,7 @@ module IrProxy
   {
     VERSION: 'version',
     Cli: 'cli',
+    EventDispatcher: 'event_dispatcher',
     Pipe: 'pipe',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("ir_proxy/#{fp}")) }
   # @formatter:on
