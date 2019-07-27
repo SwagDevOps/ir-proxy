@@ -36,13 +36,13 @@ class IrProxy::EventDispatcher::Dispatcher
   # The event instance is then passed to each listener of that event.
   #
   # @param [String|Symbol] event_name
-  # @parm [Object] event
+  # @param [Object] *args
   #
   # @return [Boolean]
-  def dispatch(event_name, event)
+  def dispatch(event_name, *args)
     true.tap do
       self.listeners[event_name].to_a.each do |listener|
-        listener.call(event).tap do |result|
+        listener.call(*args).tap do |result|
           return false if result.is_a?(FalseClass)
         end
       end

@@ -28,8 +28,8 @@ class IrProxy::EventDispatcher
     self.tap { dispatcher.listen(**kwargs) }
   end
 
-  def dispatch(event_name, event)
-    self.tap { dispatcher.dispatch(event_name, event) }
+  def dispatch(event_name, *args)
+    self.tap { dispatcher.dispatch(event_name, *args) }
   end
 
   protected
