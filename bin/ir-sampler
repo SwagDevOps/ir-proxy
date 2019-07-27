@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Print randomized samples
+#
+# Simulate ouptut genereated by:
+#
+# ```sh
+# sudo ir-keytable -a /etc/rc_maps.cfg -t
+# ```
+
+autoload(:Pathname, 'pathname')
+Pathname.new(__dir__).join('../lib', 'ir_proxy.rb').tap do |file|
+  require_relative file if file.file?
+end
+
+autoload(:IrProxy, 'ir_proxy')
+require 'sys/proc'
+
+Pathname.new(__FILE__).basename.to_s.tap do |progname|
+  $PROGRAM_NAME      = progname
+  Sys::Proc.progname = progname
+end
+
+IrProxy::Sampler.new.tap(&:call)
