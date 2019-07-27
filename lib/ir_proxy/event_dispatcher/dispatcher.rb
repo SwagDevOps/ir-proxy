@@ -49,6 +49,12 @@ class IrProxy::EventDispatcher::Dispatcher
     end
   end
 
+  def freeze
+    listeners.freeze unless listeners.frozen?
+
+    super
+  end
+
   protected
 
   # @type [Hash{Symbol => Object}]
