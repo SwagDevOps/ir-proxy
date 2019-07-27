@@ -1,0 +1,12 @@
+# Data to simulate ouptut genereated by:
+#
+# ```sh
+# sudo ir-keytable -a /etc/rc_maps.cfg -t
+# ```
+---
+key_numeric_2: |
+  153.609214: lirc protocol(rc6_mce): scancode = 0x800f0402
+  153.609242: event type EV_MSC(0x04): scancode = 0x800f0402
+  153.609242: event type EV_SYN(0x00).
+  153.740419: event type EV_KEY(0x01) key_up: KEY_NUMERIC_2(0x0202)
+  153.740419: event type EV_SYN(0x00).
