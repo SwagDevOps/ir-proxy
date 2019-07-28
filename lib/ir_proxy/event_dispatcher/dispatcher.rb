@@ -16,10 +16,19 @@ class IrProxy::EventDispatcher::Dispatcher
     listen(**kwargs)
   end
 
+  # Add new listener(s) (by name)
+  #
+  # Sample of use:
+  #
+  # ```ruby
+  # dispatcher.listen(user_login: UserLoginListener.new)
+  # ````
+  # @param [Hash{Symbol => Object}] kwargs
+  # @option kwargs [Object] * Listener for given `event_name`
   def listen(**kwargs)
     self.tap do
-      kwargs.each do |evenet_name, listener|
-        self.add_listener(evenet_name, listener)
+      kwargs.each do |event_name, listener|
+        self.add_listener(event_name, listener)
       end
     end
   end
@@ -29,7 +38,7 @@ class IrProxy::EventDispatcher::Dispatcher
   # @param [String|Symbol] event_name
   #
   # @return [Boolean]
-  def listen?(event_name)
+  def listeners?(event_name)
     event_name.to_sym.tap do |key|
       return (listeners.key?(key) and !listeners[key].empty?)
     end
@@ -40,7 +49,7 @@ class IrProxy::EventDispatcher::Dispatcher
   # The event instance is then passed to each listener of that event.
   #
   # @param [String|Symbol] event_name
-  # @param [Object] *args
+  # @param [Object] args atguments passed to `Object#call` listener method
   #
   # @return [Boolean]
   def dispatch(event_name, *args)
