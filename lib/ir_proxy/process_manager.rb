@@ -24,6 +24,7 @@ class IrProxy::ProcessManager
     Process.getpgid($PROCESS_ID)
   end
 
+  # @param [String] args
   def call(*args)
     self.tap do
       self.thread do
@@ -46,17 +47,23 @@ class IrProxy::ProcessManager
   # @return [Array<Integer>]
   attr_accessor :pids
 
+  # @type [Hash{String => String}]
+  attr_accessor :env
+
   def initialize
     self.pids = []
+    self.env = ENV.to_h.freeze
   end
 
+  # @return [Thread]
   def thread
     Thread.abort_on_exception = true
 
     Thread.new(&Proc.new)
   end
 
+  # @param [String] args
   def sh(*args)
-    Shell.sh(*args)
+    Shell.sh(*args.push(env))
   end
 end
