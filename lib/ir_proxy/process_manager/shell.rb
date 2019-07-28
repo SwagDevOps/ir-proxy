@@ -20,7 +20,7 @@ class IrProxy::ProcessManager::Shell
   end
 
   def call(*args)
-    mutex.synchronize { run(env, *args) }
+    mutex.synchronize { run(*args) }
   end
 
   class << self
@@ -49,7 +49,7 @@ class IrProxy::ProcessManager::Shell
   # @return [Boolean|nil]
   #
   # @raise [RuntimeError]
-  def run(env, *args)
+  def run(*args)
     system(env, *args) || lambda do
       $CHILD_STATUS.tap do |stt|
         raise "#{args.inspect} (#{stt.to_i})" # unless [15].include?(stt.to_i)
