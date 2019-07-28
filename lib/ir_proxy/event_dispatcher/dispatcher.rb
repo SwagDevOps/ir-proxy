@@ -25,7 +25,11 @@ class IrProxy::EventDispatcher::Dispatcher
   end
 
   # Denote the given event hash listeners.
-  def listeners?(event_name)
+  #
+  # @param [String|Symbol] event_name
+  #
+  # @return [Boolean]
+  def listen?(event_name)
     event_name.to_sym.tap do |key|
       return (listeners.key?(key) and !listeners[key].empty?)
     end
@@ -43,14 +47,15 @@ class IrProxy::EventDispatcher::Dispatcher
     true.tap do
       self.listeners[event_name].to_a.each do |listener|
         listener.call(*args).tap do |result|
-          return false if result.is_a?(FalseClass)
+          # noinspection RubySimplifyBooleanInspection
+          return false if result == false
         end
       end
     end
   end
 
   def freeze
-    listeners.freeze unless listeners.frozen?
+    listeners.freeze
 
     super
   end
