@@ -28,7 +28,7 @@ class IrProxy::Pipe
 
   protected
 
-  # @tddo write real implementation
+  # @todo write real implementation
   def process_line(line)
     $stdout.puts(line)
   end
