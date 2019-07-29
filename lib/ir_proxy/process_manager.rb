@@ -19,11 +19,15 @@ class IrProxy::ProcessManager
   }.each { |s, fp| autoload(s, "#{__dir__}/process_manager/#{fp}") }
   # @formatter:on
 
+  # Get the process group ID.
+  #
   # @return [Integer]
   def pgid
     Process.getpgid($PROCESS_ID)
   end
 
+  # Execute given `args` as subprocess command line.
+  #
   # @param [String] args
   def call(*args)
     self.tap do
@@ -31,6 +35,13 @@ class IrProxy::ProcessManager
         fork { sh(*args) }.tap { |pid| pids.push(pid) }
       end.join
     end
+  end
+
+  # Execute given `args` as command line (``system``).
+  #
+  # @return [Boolean|nil]
+  def sh(*args)
+    shell.call(*args)
   end
 
   # Terminate subprocesses.
@@ -62,8 +73,8 @@ class IrProxy::ProcessManager
     Thread.new(&Proc.new)
   end
 
-  # @param [String] args
-  def sh(*args)
-    Shell.sh(*args.push(env))
+  # @return [Shell]
+  def shell
+    Shell.new(env)
   end
 end
