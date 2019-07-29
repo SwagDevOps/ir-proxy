@@ -19,11 +19,13 @@ class IrProxy::ProcessManager::Shell
     @mutex = Mutex.new
   end
 
+  # @return [Boolean|nil]
   def call(*args)
     mutex.synchronize { run(*args) }
   end
 
   class << self
+    # @return [Boolean|nil]
     def sh(*args)
       [{}, args.clone].tap do |env, cmd|
         if args.size > 1 and args[-1].is_a?(Hash)
@@ -43,11 +45,9 @@ class IrProxy::ProcessManager::Shell
 
   # Run command.
   #
-  # @param [Hash{String => String}] env
   # @param [String] args
   #
   # @return [Boolean|nil]
-  #
   # @raise [RuntimeError]
   def run(*args)
     system(env, *args) || lambda do
