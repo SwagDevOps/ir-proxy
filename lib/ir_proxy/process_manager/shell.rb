@@ -15,18 +15,16 @@ class IrProxy::ProcessManager::Shell
 
   def initialize(env = {})
     @env = ENV.to_h.merge(env).clone.freeze
-
-    @mutex = Mutex.new
   end
 
   # @return [Boolean|nil]
   def call(*args)
-    mutex.synchronize { self.exec(*args) }
+    self.exec(*args)
   end
 
   class << self
     # @return [Boolean|nil]
-    def sh(*args)
+    def exec(*args)
       [{}, args.clone].tap do |env, cmd|
         if args.size > 1 and args[-1].is_a?(Hash)
           env = args[-1]
@@ -40,9 +38,6 @@ class IrProxy::ProcessManager::Shell
 
   protected
 
-  # @type [Mutex]
-  attr_reader :mutex
-
   # Run command.
   #
   # @param [String] args
@@ -50,9 +45,13 @@ class IrProxy::ProcessManager::Shell
   # @return [Boolean|nil]
   # @raise [RuntimeError]
   def exec(*args)
-    Kernel.exec(env, *args) || lambda do
+    Kernel.exec(env, *args)
+  end
+
+  def system(*args)
+    Kernel.system(env, *args) || lambda do
       $CHILD_STATUS.tap do |stt|
-        raise "#{args.inspect} (#{stt.to_i})" # unless [15].include?(stt.to_i)
+        raise "#{args.inspect} (#{stt.to_i})"
       end
     end.call
   rescue Interrupt
