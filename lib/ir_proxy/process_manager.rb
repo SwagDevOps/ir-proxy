@@ -31,19 +31,34 @@ class IrProxy::ProcessManager
   # Execute given `args` as subprocess command line.
   #
   # @param [String] args
+  # @retunr [self]
   def call(*args)
-    self.thread do
-      fork { sh(*args) }.tap do |pid|
+    self.tap { sh(*args) }
+  end
+
+  # Execute given `args` as command line (``system``).
+  #
+  # @return [Boolean|nil]
+  def sh(*args)
+    fork { shell.call(*args) }.tap do |pid|
+      if pid
         Process.detach(pid)
         self.state.push(pid)
       end
-    end.join
+    end
+  end
 
-    self
+  # Denote manager is runing.
+  #
+  # @return [Boolean]
+  def running?
+    self.running
   end
 
   class << self
-    def call
+    def run
+      instance.__send__('running=', true)
+
       yield(instance)
 
       instance.__send__(:state).tap do |state|
@@ -51,13 +66,6 @@ class IrProxy::ProcessManager
         exit(0)
       end
     end
-  end
-
-  # Execute given `args` as command line (``system``).
-  #
-  # @return [Boolean|nil]
-  def sh(*args)
-    shell.call(*args)
   end
 
   # Terminate process and subprocesses.
@@ -77,20 +85,26 @@ class IrProxy::ProcessManager
   # @return [State]
   attr_accessor :state
 
+  # @return [Boolean]
+  attr_reader :running
+
   def initialize
     self.env = ENV.to_h.freeze
     self.state = State.new(timeout: 5)
-
-    [:INT, :TERM].each do |sign|
-      Signal.trap(sign) { self.terminate }
-    end
   end
 
-  # @return [Thread]
-  def thread
-    Thread.abort_on_exception = true
+  # Set running (and prepare instance to assume its role).
+  #
+  # @param [Boolean] flag
+  def running=(flag)
+    unless running?
+      [:INT, :TERM].each do |sign|
+        Signal.trap(sign) { self.terminate }
+      end
+    end
 
-    Thread.new(&Proc.new)
+    # noinspection RubySimplifyBooleanInspection
+    @running = !!flag
   end
 
   # @return [Shell]
