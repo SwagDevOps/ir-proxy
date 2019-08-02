@@ -14,7 +14,7 @@ require 'timeout'
 # Sample of use:
 #
 # ```ruby
-# IrProxy::ProcessManager.handle do |pm|
+# IrProxy::ProcessManager.manage do |pm|
 #   pm.call('sleep', '20')
 #   pm.call('sleep', '20')
 #   pm.call('sleep', '20')
@@ -66,9 +66,14 @@ class IrProxy::ProcessManager
   end
 
   class << self
-    # @!attribute instance
-    #   @return [IrProxy::ProcessManager]
+    # Manage given block.
+    #
+    # @yield [ProcessManager]
+    def manage(&block)
+      yield(self.handle(&block))
+    end
 
+    # @yield [ProcessManager]
     def handle(managed = true)
       self.instance.__send__('managed=', managed)
 
@@ -79,15 +84,22 @@ class IrProxy::ProcessManager
         exit(0) if self.instance.managed?
       end
     end
+
+    # @!attribute instance
+    #   @return [IrProxy::ProcessManager]
   end
 
   # Terminate process and subprocesses.
+  #
+  # @return [self]
   def terminate
-    warn("Terminating (#{$PROCESS_ID})...")
-    self.state.clear
-    exit(0) if self.managed?
-  rescue Timeout::Error
-    Process.kill(:HUP, -self.pgid) if self.managed?
+    self.tap do
+      warn("Terminating (#{$PROCESS_ID})...")
+      self.state.clear
+      exit(0) if self.managed?
+    rescue Timeout::Error
+      Process.kill(:HUP, -self.pgid) if self.managed?
+    end
   end
 
   protected
