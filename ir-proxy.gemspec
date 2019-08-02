@@ -17,7 +17,8 @@ Gem::Specification.new do |s|
 
   # MUST follow the higher required_ruby_version
   # requires version >= 2.3.0 due to safe navigation operator &
-  s.required_ruby_version = ">= 2.3.0"
+  # requires version >= 2.5.0 due to Lint/Syntax: unexpected token kRESCUE
+  s.required_ruby_version = ">= 2.5.0"
   s.require_paths = ["lib"]
   s.bindir        = "bin"
   s.executables   = Dir.glob([s.bindir, "/*"].join)
@@ -32,6 +33,7 @@ Gem::Specification.new do |s|
    .flatten
    .push(*s.executables.map { |f| [s.bindir, f].join("/") })
 
+  s.add_runtime_dependency("concurrent-ruby", ["~> 1.1"])
   s.add_runtime_dependency("kamaze-version", ["~> 1.0"])
   s.add_runtime_dependency("sys-proc", ["~> 1.1"])
 end
