@@ -10,6 +10,16 @@ require_relative '../ir_proxy'
 require 'timeout'
 
 # Process manager (using forked processes).
+#
+# Sample of use:
+#
+# ```ruby
+# IrProxy::ProcessManager.handle do |pm|
+#   pm.call('sleep', '20')
+#   pm.call('sleep', '20')
+#   pm.call('sleep', '20')
+# end
+# ```
 class IrProxy::ProcessManager
   autoload(:Singleton, 'singleton')
   include Singleton
@@ -48,22 +58,25 @@ class IrProxy::ProcessManager
     end
   end
 
-  # Denote manager is runing.
+  # Denote manager is managed.
   #
   # @return [Boolean]
-  def running?
-    self.running
+  def managed?
+    self.managed
   end
 
   class << self
-    def run
-      instance.__send__('running=', true)
+    # @!attribute instance
+    #   @return [IrProxy::ProcessManager]
 
-      yield(instance)
+    def handle(managed = true)
+      self.instance.__send__('managed=', managed)
 
-      instance.__send__(:state).tap do |state|
-        sleep(0.1) until state.clean.empty?
-        exit(0)
+      yield(self.instance)
+
+      self.instance.__send__(:state).tap do |state|
+        sleep(0.05) until state.clean.empty?
+        exit(0) if self.instance.managed?
       end
     end
   end
@@ -72,9 +85,9 @@ class IrProxy::ProcessManager
   def terminate
     warn("Terminating (#{$PROCESS_ID})...")
     self.state.clear
-    exit(0)
+    exit(0) if self.managed?
   rescue Timeout::Error
-    Process.kill(:HUP, -self.pgid)
+    Process.kill(:HUP, -self.pgid) if self.managed?
   end
 
   protected
@@ -86,25 +99,28 @@ class IrProxy::ProcessManager
   attr_accessor :state
 
   # @return [Boolean]
-  attr_reader :running
+  attr_reader :managed
 
   def initialize
     self.env = ENV.to_h.freeze
     self.state = State.new(timeout: 5)
+    self.managed = false
   end
 
   # Set running (and prepare instance to assume its role).
   #
   # @param [Boolean] flag
-  def running=(flag)
-    unless running?
-      [:INT, :TERM].each do |sign|
-        Signal.trap(sign) { self.terminate }
+  def managed=(flag)
+    # noinspection RubySimplifyBooleanInspection
+    (!!flag).tap do |managed|
+      if !managed? and managed
+        [:INT, :TERM].each do |sign|
+          Signal.trap(sign) { self.terminate }
+        end
+
+        @managed = managed
       end
     end
-
-    # noinspection RubySimplifyBooleanInspection
-    @running = !!flag
   end
 
   # @return [Shell]
