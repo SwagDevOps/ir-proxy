@@ -48,7 +48,7 @@ class IrProxy::ProcessManager
 
   # Execute given `args` as command line (``system``).
   #
-  # @return [Boolean|nil]
+  # @return [Integer|nil]
   def sh(*args)
     fork { shell.call(*args) }.tap do |pid|
       if pid
