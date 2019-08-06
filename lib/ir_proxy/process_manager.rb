@@ -41,7 +41,7 @@ class IrProxy::ProcessManager
   # Execute given `args` as subprocess command line.
   #
   # @param [String] args
-  # @retunr [self]
+  # @return [self]
   def call(*args)
     self.tap { sh(*args) }
   end
