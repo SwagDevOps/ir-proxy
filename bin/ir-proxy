@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+autoload(:Pathname, 'pathname')
+Pathname.new(__dir__).join('../lib', 'ir_proxy.rb').tap do |file|
+  # noinspection RubyResolve
+  require_relative file if file.file?
+end
+
+autoload(:IrProxy, 'ir_proxy')
+require 'sys/proc'
+
+Pathname.new(__FILE__).basename.to_s.tap do |progname|
+  # noinspection RubyGlobalVariableNamingConvention
+  $PROGRAM_NAME = progname
+  Sys::Proc.progname = progname
+end
+
+IrProxy::ProcessManager.manage do |manager|
+  IrProxy::Cli.call.tap do |process|
+    process.to_i.tap do |stt|
+      # exit(stt)
+      manager.terminate if stt.zero?
+    end
+  end
+end
