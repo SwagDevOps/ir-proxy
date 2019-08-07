@@ -21,6 +21,10 @@ class IrProxy::FileLock
     @path = (filepath || default_filepath).to_s
   end
 
+  # Error acquiring lock.
+  class LockError < RuntimeError
+  end
+
   # @return [String]
   def to_s
     self.path
@@ -33,7 +37,7 @@ class IrProxy::FileLock
         # returns false if already locked, 0 if not
         lock.flock(File::LOCK_EX | File::LOCK_NB).tap do |ret|
           # noinspection RubySimplifyBooleanInspection
-          return false == ret ? abort : block.call
+          return false == ret ? abort('Already locked') : block.call
         end
       end
     end
@@ -51,9 +55,10 @@ class IrProxy::FileLock
     end
   end
 
-  def abort
-    # rubocop:disable Style/RedundantException
-    raise RuntimeError, 'Already locked'
-    # rubocop:enable Style/RedundantException
+  # @param [string] msg
+  #
+  # @raise [LockError]
+  def abort(msg)
+    raise LockError, msg
   end
 end
