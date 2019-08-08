@@ -32,6 +32,7 @@ module IrProxy
     Cli: 'cli',
     EventDispatcher: 'event_dispatcher',
     FileLock: 'file_lock',
+    KeyScan: 'key_scan',
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
     Sampler: 'sampler'
