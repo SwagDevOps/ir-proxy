@@ -34,6 +34,30 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
     line
   end
 
+  def empty?
+    to_h.empty?
+  end
+
+  # @return [Symbol|nil] lowercase
+  def type
+    to_h[:type]
+  end
+
+  # @return [Boolean]
+  def down?
+    type == :down
+  end
+
+  # @return [Boolean]
+  def up?
+    type == :up
+  end
+
+  # @return [Symbol] uppercase
+  def name
+    to_h[:name]
+  end
+
   alias to_str to_s
 
   alias to_h parsed
