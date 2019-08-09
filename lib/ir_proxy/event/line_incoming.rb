@@ -9,7 +9,7 @@
 require_relative '../event'
 
 # Intercept and process lines
-class IrProxy::Event::LineEventListener
+class IrProxy::Event::LineIncoming
   # @param [String] line
   def call(line)
     scan(line).tap do |event|
