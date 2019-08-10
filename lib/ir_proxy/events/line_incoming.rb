@@ -15,7 +15,7 @@ class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
   # @see IrProxy::Events::KeyDown#call
   def call(line)
     scan(line).tap do |event|
-      if !event.empty? and event.down?
+      unless event.empty?
         dispatcher.dispatch(:"key.#{event.type}", event)
       end
     end
