@@ -16,9 +16,10 @@ class IrProxy::Pipe
   }.each { |s, fp| autoload(s, "#{__dir__}/pipe/#{fp}") }
   # @formatter:on
 
-  def initialize(stream = $stdin, dispatcher = nil)
-    @stream = Stream.new(stream)
-    @dispatcher = dispatcher || IrProxy::EventDispatcher.instance
+  # @param [Hash{Symbol => Object}] kwargs
+  def initialize(**kwargs)
+    @stream = Stream.new(kwargs[:stream] || $stdin)
+    @dispatcher = kwargs[:dispatcher] || IrProxy::EventDispatcher.instance
   end
 
   def call
@@ -32,16 +33,8 @@ class IrProxy::Pipe
 
   protected
 
-  # @todo write real implementation
-  def process_line(line)
-    $stdout.puts(line)
-  end
-
   # @return [Stream]
   attr_reader :stream
-
-  # @return [Array<String>]
-  attr_reader :buffer
 
   # @return [IrProxy::EventDispatcher]
   attr_reader :dispatcher
