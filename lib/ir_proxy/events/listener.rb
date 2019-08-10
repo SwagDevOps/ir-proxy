@@ -10,9 +10,9 @@ require_relative '../events'
 
 # @abstract
 class IrProxy::Events::Listener
-  # @param [IrProxy::EventDispatcher] dispatcher
-  def initialize(dispatcher = nil)
-    @dispatcher = dispatcher || IrProxy::EventDispatcher.instance
+  # @param [Hash{Symbol => Object}] kwargs
+  def initialize(**kwargs)
+    @dispatcher = kwargs[:dispatcher] || IrProxy::EventDispatcher.instance
   end
 
   protected
