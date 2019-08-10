@@ -30,6 +30,7 @@ module IrProxy
   {
     VERSION: 'version',
     Cli: 'cli',
+    Events: 'events',
     EventDispatcher: 'event_dispatcher',
     FileLock: 'file_lock',
     KeyScan: 'key_scan',
@@ -46,4 +47,6 @@ module IrProxy
       require 'kamaze/project/core_ext/pp'
     end
   end
+
+  include IrProxy::Events
 end

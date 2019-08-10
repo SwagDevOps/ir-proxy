@@ -9,11 +9,11 @@
 require_relative '../ir_proxy'
 
 # Almost namespace for listeners
-module IrProxy::Event
+module IrProxy::Events
   # @formatter:off
   {
     LineIncoming: 'line_incoming',
-  }.each { |s, fp| autoload(s, "#{__dir__}/event/#{fp}") }
+  }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
   # @formatter:on
 
   class << self
@@ -24,7 +24,11 @@ module IrProxy::Event
     protected
 
     def register
-      dispatcher.listen('line.incoming': LineIncoming.new)
+      # @formatter:off
+      {
+        'line.incoming': LineIncoming.new,
+      }.tap { |events| dispatcher.listen(events) }
+      # @formatter:on
     end
 
     # @return [IrProxy::EventDispatcher.]

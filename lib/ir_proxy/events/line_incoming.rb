@@ -6,10 +6,10 @@
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-require_relative '../event'
+require_relative '../events'
 
 # Intercept and process lines
-class IrProxy::Event::LineIncoming
+class IrProxy::Events::LineIncoming
   # @param [String] line
   def call(line)
     scan(line).tap do |event|
