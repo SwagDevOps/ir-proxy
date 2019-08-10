@@ -12,6 +12,7 @@ require_relative '../ir_proxy'
 module IrProxy::Events
   # @formatter:off
   {
+    Listener: 'listener',
     LineIncoming: 'line_incoming',
   }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
   # @formatter:on
@@ -31,7 +32,7 @@ module IrProxy::Events
       # @formatter:on
     end
 
-    # @return [IrProxy::EventDispatcher.]
+    # @return [IrProxy::EventDispatcher]
     def dispatcher
       IrProxy::EventDispatcher.instance
     end
