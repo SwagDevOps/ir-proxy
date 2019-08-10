@@ -9,12 +9,14 @@
 require_relative '../events'
 
 # Intercept and process lines
-class IrProxy::Events::LineIncoming
+class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
   # @param [String] line
+  #
+  # @see IrProxy::Events::KeyDown#call
   def call(line)
     scan(line).tap do |event|
       if !event.empty? and event.down?
-        pp(event)
+        dispatcher.dispatch(:"key.#{event.type}", event)
       end
     end
   end
