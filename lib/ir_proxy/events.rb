@@ -14,6 +14,7 @@ module IrProxy::Events
   {
     Listener: 'listener',
     LineIncoming: 'line_incoming',
+    KeyDown: 'key_down',
   }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
   # @formatter:on
 
@@ -28,6 +29,7 @@ module IrProxy::Events
       # @formatter:off
       {
         'line.incoming': LineIncoming.new,
+        'key.down': KeyDown.new
       }.tap { |events| dispatcher.listen(events) }
       # @formatter:on
     end
