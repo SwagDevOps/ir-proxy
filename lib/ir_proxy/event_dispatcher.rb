@@ -12,14 +12,15 @@ require_relative '../ir_proxy'
 #
 # @see IrProxy::EventDispatcher::Dispatcher
 class IrProxy::EventDispatcher
-  autoload(:Singleton, 'singleton')
-  include Singleton
-
   # @formatter:off
   {
     Dispatcher: 'dispatcher',
   }.each { |s, fp| autoload(s, "#{__dir__}/event_dispatcher/#{fp}") }
   # @formatter:on
+
+  def initialize
+    @dispatcher = Dispatcher.new
+  end
 
   # Connect listeners to the dispatcher
   #
@@ -36,8 +37,4 @@ class IrProxy::EventDispatcher
 
   # @return [IrProxy::EventDispatcher::Dispatcher]
   attr_reader :dispatcher
-
-  def initialize
-    @dispatcher = Dispatcher.new
-  end
 end

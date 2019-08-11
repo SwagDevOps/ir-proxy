@@ -16,7 +16,7 @@ class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
   def call(line)
     scan(line).tap do |event|
       unless event.empty?
-        dispatcher.dispatch(:"key.#{event.type}", event)
+        event_dispatcher.dispatch(:"key.#{event.type}", event)
       end
     end
   end

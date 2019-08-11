@@ -26,17 +26,21 @@ module IrProxy::Events
     protected
 
     def register
-      # @formatter:off
-      {
-        'line.incoming': LineIncoming.new,
-        'key.down': KeyDown.new
-      }.tap { |events| dispatcher.listen(events) }
-      # @formatter:on
+      IrProxy[:event_dispatcher].tap do |event_dispatcher|
+        # @type [IrProxy::EventDispatcher] event_dispatcher
+        event_dispatcher.listen(listeners)
+      end
     end
 
-    # @return [IrProxy::EventDispatcher]
-    def dispatcher
-      IrProxy::EventDispatcher.instance
+    # Find listeners from container.
+    #
+    # @return [Hash{Symbol => Listener|Object}]
+    def listeners
+      IrProxy.container.keys.map do |id|
+        if /^events:/ =~ id.to_s
+          [id.to_s.gsub(/^events:/, '').to_sym, IrProxy[id]]
+        end
+      end.compact.to_h
     end
   end
 end

@@ -14,22 +14,27 @@ require 'timeout'
 # Sample of use:
 #
 # ```ruby
-# IrProxy::ProcessManager.manage do |pm|
+# IrProxy::ProcessManager.new(true) do |pm|
 #   pm.call('sleep', '20')
 #   pm.call('sleep', '20')
 #   pm.call('sleep', '20')
 # end
 # ```
 class IrProxy::ProcessManager
-  autoload(:Singleton, 'singleton')
-  include Singleton
-
   # @formatter:off
   {
     Shell: 'shell',
     State: 'state',
   }.each { |s, fp| autoload(s, "#{__dir__}/process_manager/#{fp}") }
   # @formatter:on
+
+  def initialize(managed = true, &block)
+    self.env = ENV.to_h.freeze
+    self.state = State.new(timeout: 5)
+    self.managed = managed
+
+    yield(handle(&block)) if block
+  end
 
   # Get the process group ID.
   #
@@ -65,28 +70,14 @@ class IrProxy::ProcessManager
     self.managed
   end
 
-  class << self
-    # Manage given block.
-    #
-    # @yield [ProcessManager]
-    def manage(&block)
-      yield(self.handle(&block))
-    end
+  # Manage given block.
+  #
+  # @yield [ProcessManager]
+  def handle
+    yield(self)
 
-    # @yield [ProcessManager]
-    def handle(managed = true)
-      self.instance.__send__('managed=', managed)
-
-      yield(self.instance)
-
-      self.instance.__send__(:state).tap do |state|
-        sleep(0.05) until state.clean.empty?
-        exit(0) if self.instance.managed?
-      end
-    end
-
-    # @!attribute instance
-    #   @return [IrProxy::ProcessManager]
+    sleep(0.05) until state.clean.empty?
+    exit(0) if self.managed?
   end
 
   # Terminate process and subprocesses.
@@ -112,12 +103,6 @@ class IrProxy::ProcessManager
 
   # @return [Boolean]
   attr_reader :managed
-
-  def initialize
-    self.env = ENV.to_h.freeze
-    self.state = State.new(timeout: 5)
-    self.managed = false
-  end
 
   # Set running (and prepare instance to assume its role).
   #

@@ -12,11 +12,11 @@ require_relative '../events'
 class IrProxy::Events::Listener
   # @param [Hash{Symbol => Object}] kwargs
   def initialize(**kwargs)
-    @dispatcher = kwargs[:dispatcher] || IrProxy::EventDispatcher.instance
+    @event_dispatcher = kwargs[:event_dispatcher] || IrProxy[:event_dispatcher]
   end
 
   protected
 
   # @return [IrProxy::EventDispatcher]
-  attr_reader :dispatcher
+  attr_reader :event_dispatcher
 end

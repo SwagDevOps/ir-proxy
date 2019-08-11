@@ -19,14 +19,13 @@ class IrProxy::Pipe
   # @param [Hash{Symbol => Object}] kwargs
   def initialize(**kwargs)
     @stream = Stream.new(kwargs[:stream] || $stdin)
-    @dispatcher = kwargs[:dispatcher] || IrProxy::EventDispatcher.instance
+    @event_dispatcher = kwargs[:event_dispatcher] || IrProxy[:event_dispatcher]
   end
 
   def call
     Thread.new do
       stream.listen do |line|
-        # @see [IrProxy::Event::LineEventListener#call()]
-        dispatcher.dispatch(:'line.incoming', line)
+        event_dispatcher.dispatch(:'line.incoming', line)
       end
     end.join
   end
@@ -37,5 +36,5 @@ class IrProxy::Pipe
   attr_reader :stream
 
   # @return [IrProxy::EventDispatcher]
-  attr_reader :dispatcher
+  attr_reader :event_dispatcher
 end

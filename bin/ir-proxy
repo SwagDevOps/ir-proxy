@@ -10,13 +10,9 @@ end
 autoload(:IrProxy, 'ir_proxy')
 require 'sys/proc'
 
-Pathname.new(__FILE__).basename.to_s.tap do |progname|
-  # noinspection RubyGlobalVariableNamingConvention
-  $PROGRAM_NAME = progname
-  Sys::Proc.progname = progname
-end
+Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
 
-IrProxy::ProcessManager.manage do |manager|
+IrProxy[:process_manager].handle do |manager|
   IrProxy::Cli.call.tap do |process|
     process.to_i.tap do |stt|
       # exit(stt)

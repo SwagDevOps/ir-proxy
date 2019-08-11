@@ -16,7 +16,7 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
   end
 
   def initialize(**kwargs)
-    (kwargs[:process_manager] || IrProxy::ProcessManager.instance).tap do |pm|
+    (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
       @process_manager = pm
     end
   end
