@@ -12,6 +12,10 @@ require_relative '../ir_proxy'
 class IrProxy::Container
   autoload(:Singleton, 'singleton')
   include Singleton
+  class << self
+    # @!attribute instance
+    #   @return [IrProxy::ProcessManager]
+  end
 
   # @return [Object]
   def get(id)
@@ -26,13 +30,20 @@ class IrProxy::Container
   # @return [self]
   def set(id, instance)
     self.tap do
-      dependencies.merge!(id.to_sym => instance)
+      (instance.is_a?(Proc) ? instance.call : instance).tap do |value|
+        dependencies.merge!(id.to_sym => value)
+      end
     end
   end
 
   # @return [Boolean]
   def empty?
     dependencies.empty?
+  end
+
+  # @return [Array<Symbol>]
+  def keys
+    dependencies.keys
   end
 
   def freeze
