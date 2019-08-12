@@ -27,7 +27,7 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
   def parsed
     @parsed ||= lambda do
       self.class.parse(line).to_h
-    end.call
+    end.call.freeze
   end
 
   def to_s
