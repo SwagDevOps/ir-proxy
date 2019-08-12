@@ -11,15 +11,17 @@
 
 autoload(:Pathname, 'pathname')
 Pathname.new(__dir__).join('../lib', 'ir_proxy.rb').tap do |file|
+  # noinspection RubyResolve
   require_relative file if file.file?
 end
 
 autoload(:IrProxy, 'ir_proxy')
 require 'sys/proc'
 
-Pathname.new(__FILE__).basename.to_s.tap do |progname|
-  $PROGRAM_NAME      = progname
-  Sys::Proc.progname = progname
-end
+Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
 
-IrProxy::Sampler.new.tap(&:call)
+begin
+  IrProxy::Sampler.new.tap(&:call)
+rescue Errno::EPIPE
+  exit(0)
+end
