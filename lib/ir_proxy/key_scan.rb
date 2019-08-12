@@ -13,10 +13,10 @@ class IrProxy::KeyScan
   # 1565163195.634614: event type EV_KEY(0x01) key_down: KEY_NUMERIC_2(0x0202)
   REGEXP = /(?<time>[0-9]+\.[0-9]+):\s+
 event\s+type\s+EV_KEY
-\((?<code_1>[0-9]+x[0-9]+)\)\s+
+\((?<code_1>[0-9]+x[0-9 a-f A-F]+)\)\s+
 key_(?<type>down|up):\s+
 KEY_(?<name>[A-Z]+[A-Z_0-9]*)
-\((?<code_2>[0-9]+x[0-9]+)\)/x.freeze
+\((?<code_2>[0-9]+x[0-9 a-f A-F]+)\)/x.freeze
 
   # @param [String] line
   def initialize(line)
