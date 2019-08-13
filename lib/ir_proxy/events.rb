@@ -27,9 +27,9 @@ module IrProxy::Events
     protected
 
     def register
-      IrProxy[:event_dispatcher].tap do |event_dispatcher|
-        # @type [IrProxy::EventDispatcher] event_dispatcher
-        event_dispatcher.listen(listeners)
+      IrProxy[:events_dispatcher].tap do |events_dispatcher|
+        # @type [IrProxy::EventDispatcher] events_dispatcher
+        events_dispatcher.listen(listeners)
       end
     end
 

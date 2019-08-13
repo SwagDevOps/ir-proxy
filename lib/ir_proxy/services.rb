@@ -9,7 +9,7 @@
 # @formatter:off
 {
   'process_manager': -> { ProcessManager.new },
-  'event_dispatcher': -> { Events::Dispatcher.new },
+  'events_dispatcher': -> { Events::Dispatcher.new },
   'key_scanner': -> { KeyScan },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
