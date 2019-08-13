@@ -18,6 +18,10 @@ class IrProxy::Container
     #   @return [IrProxy::ProcessManager]
   end
 
+  def inspect
+    self.dependencies.inspect
+  end
+
   # @return [Object]
   def get(id)
     unless dependencies.key?(id.to_sym)
