@@ -10,6 +10,7 @@
 {
   'process_manager': -> { ProcessManager.new },
   'event_dispatcher': -> { EventDispatcher.new },
+  'key_scanner': -> { KeyScan },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
   'events:key.down': -> { Events::KeyDown.new },
