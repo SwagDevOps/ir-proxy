@@ -65,6 +65,13 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
   class << self
     # @param [String] line
     #
+    # @return [KeyScan]
+    def call(line)
+      self.new(line)
+    end
+
+    # @param [String] line
+    #
     # @return [Hash{String => String}|nil]
     def parse(line)
       REGEXP.match(line).tap do |m|
