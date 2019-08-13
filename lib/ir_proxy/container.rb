@@ -10,6 +10,7 @@ require_relative '../ir_proxy'
 
 # Container for services (service locator).
 class IrProxy::Container
+  autoload(:Concurrent, 'concurrent')
   autoload(:Singleton, 'singleton')
   include Singleton
   class << self
@@ -19,35 +20,47 @@ class IrProxy::Container
 
   # @return [Object]
   def get(id)
+    unless dependencies.key?(id.to_sym)
+      callables.fetch(id.to_sym).call.tap do |instance|
+        dependencies[id.to_sym] = instance
+        callables.delete(id.to_sym)
+      end
+    end
+
     dependencies.fetch(id.to_sym)
   end
 
   # @return [Boolean]
   def has(id)
-    key?(id.to_sym)
+    key?(id.to_sym) || callables.key?(id.to_sym)
   end
 
   # @return [self]
   def set(id, instance)
     self.tap do
-      (instance.is_a?(Proc) ? instance.call : instance).tap do |value|
-        dependencies.merge!(id.to_sym => value)
-      end
+      # @formatter:off
+      (instance.is_a?(Proc) ? callables : dependencies)
+        .merge!(id.to_sym => instance)
+      # @formatter:on
     end
   end
 
   # @return [Boolean]
   def empty?
-    dependencies.empty?
+    keys.empty?
   end
 
   # @return [Array<Symbol>]
   def keys
-    dependencies.keys
+    dependencies.keys.push(*callables.keys).sort
   end
 
   def freeze
-    super.tap { dependencies.freeze }
+    super.tap do
+      keys.each { |key| self.get(key) }
+      callables.freeze
+      dependencies.freeze
+    end
   end
 
   protected
@@ -55,7 +68,11 @@ class IrProxy::Container
   # @return [Hash{Symbol => Object}]
   attr_accessor :dependencies
 
+  # @return [Hash{Symbol => Object}]
+  attr_accessor :callables
+
   def initialize
-    @dependencies = {}
+    @dependencies = Concurrent::Hash.new
+    @callables = Concurrent::Hash.new
   end
 end
