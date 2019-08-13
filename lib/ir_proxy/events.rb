@@ -12,6 +12,7 @@ require_relative '../ir_proxy'
 module IrProxy::Events
   # @formatter:off
   {
+    Dispatcher: 'dispatcher',
     Listener: 'listener',
     LineIncoming: 'line_incoming',
     KeyDown: 'key_down',
