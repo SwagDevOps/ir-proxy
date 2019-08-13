@@ -10,6 +10,11 @@ require_relative '../events'
 
 # Intercept and process lines
 class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
+  def initialize(**kwargs)
+    super
+    @key_scanner = kwargs[:key_scanner] || IrProxy[:key_scanner]
+  end
+
   # @param [String] line
   #
   # @see IrProxy::Events::KeyDown#call
@@ -23,8 +28,11 @@ class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
 
   protected
 
+  # @return [Class]
+  attr_reader :key_scanner
+
   # @return [IrProxy::KeyScan]
   def scan(line)
-    IrProxy::KeyScan.new(line)
+    key_scanner.call(line)
   end
 end
