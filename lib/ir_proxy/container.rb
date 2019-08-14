@@ -19,15 +19,15 @@ class IrProxy::Container
   end
 
   def inspect
-    self.dependencies.inspect
+    self.keys.inspect
   end
 
   # @return [Object]
   def get(id)
     unless dependencies.key?(id.to_sym)
-      callables.fetch(id.to_sym).call.tap do |instance|
+      constructors.fetch(id.to_sym).call.tap do |instance|
         dependencies[id.to_sym] = instance
-        callables.delete(id.to_sym)
+        constructors.delete(id.to_sym)
       end
     end
 
@@ -36,14 +36,14 @@ class IrProxy::Container
 
   # @return [Boolean]
   def has(id)
-    key?(id.to_sym) || callables.key?(id.to_sym)
+    key?(id.to_sym) || constructors.key?(id.to_sym)
   end
 
   # @return [self]
   def set(id, instance)
     self.tap do
       # @formatter:off
-      (instance.is_a?(Proc) ? callables : dependencies)
+      (instance.is_a?(Proc) ? constructors : dependencies)
         .merge!(id.to_sym => instance)
       # @formatter:on
     end
@@ -56,15 +56,19 @@ class IrProxy::Container
 
   # @return [Array<Symbol>]
   def keys
-    dependencies.keys.push(*callables.keys).sort
+    dependencies.keys.push(*constructors.keys).sort
   end
 
   def freeze
     super.tap do
       keys.each { |key| self.get(key) }
-      callables.freeze
-      dependencies.freeze
+      constructors.freeze unless constructors.frozen?
+      dependencies.freeze unless dependencies.frozen?
     end
+  end
+
+  def to_h
+    self.keys.map { |k| [k, self.get(k)] }.to_h
   end
 
   protected
@@ -72,11 +76,13 @@ class IrProxy::Container
   # @return [Hash{Symbol => Object}]
   attr_accessor :dependencies
 
+  # Stored dependencies
+  #
   # @return [Hash{Symbol => Object}]
-  attr_accessor :callables
+  attr_accessor :constructors
 
   def initialize
     @dependencies = Concurrent::Hash.new
-    @callables = Concurrent::Hash.new
+    @constructors = Concurrent::Hash.new
   end
 end
