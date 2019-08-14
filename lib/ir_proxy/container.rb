@@ -22,21 +22,17 @@ class IrProxy::Container
     self.keys.inspect
   end
 
+  # @param [String|Symbol] id
+  #
   # @return [Object]
+  # @raise [NotFoundError]
   def get(id)
-    unless dependencies.key?(id.to_sym)
-      constructors.fetch(id.to_sym).call.tap do |instance|
-        dependencies[id.to_sym] = instance
-        constructors.delete(id.to_sym)
-      end
-    end
-
-    dependencies.fetch(id.to_sym)
+    resolve(id.to_sym).dependencies.fetch(id.to_sym)
   end
 
   # @return [Boolean]
-  def has(id)
-    key?(id.to_sym) || constructors.key?(id.to_sym)
+  def has?(id)
+    keys.include?(id.to_sym)
   end
 
   # @return [self]
@@ -67,8 +63,19 @@ class IrProxy::Container
     end
   end
 
-  def to_h
-    self.keys.map { |k| [k, self.get(k)] }.to_h
+  # Represent a generic exception in a container.
+  class Error < ::RuntimeError
+  end
+
+  # No entry was found in the container.
+  class NotFoundError < Error
+    attr_reader :key
+
+    # Initialize error with given key.
+    def initialize(key)
+      @key = key
+      super("No entry #{key.inspect} was found in the container.")
+    end
   end
 
   protected
@@ -84,5 +91,22 @@ class IrProxy::Container
   def initialize
     @dependencies = Concurrent::Hash.new
     @constructors = Concurrent::Hash.new
+  end
+
+  # @param [String|Symbol] id
+  #
+  # @return [self]
+  # @raise [NotFoundError]
+  def resolve(id)
+    raise NotFoundError, id.to_sym unless has?(id)
+
+    self.tap do
+      unless dependencies.key?(id.to_sym)
+        constructors.fetch(id.to_sym).call.tap do |instance|
+          dependencies[id.to_sym] = instance
+          constructors.delete(id.to_sym)
+        end
+      end
+    end
   end
 end
