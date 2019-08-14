@@ -51,7 +51,7 @@ module IrProxy
   class << self
     # @return [Container]
     def container
-      Container.instance.tap do |container|
+      @container ||= Container.instance.tap do |container|
         if container.empty?
           services.each { |k, v| container.set(k, v) }
 
