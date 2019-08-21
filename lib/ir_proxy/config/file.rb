@@ -17,21 +17,10 @@ class IrProxy::Config::File < Pathname
 
   # @param [String] path
   def initialize(path = nil)
-    @loaded = nil
-
     (path || lambda do
       Pathname.new(XDG['CONFIG_HOME'].to_s)
           .join(Sys::Proc.progname, 'config.yml')
     end.call).tap { |fp| super(fp) }
-  end
-
-  # @return [self]
-  def load
-    self.tap { @loaded ||= self.parse }
-  end
-
-  def to_h
-    self.load.loaded
   end
 
   # Read (and parse) config file.
@@ -41,9 +30,7 @@ class IrProxy::Config::File < Pathname
     YAML.safe_load(self.read).tap do |h|
       return h.map { |k, v| [k.to_sym, v] }.to_h.freeze
     end
+  rescue Errno::ENOENT
+    {}
   end
-
-  protected
-
-  attr_reader :loaded
 end
