@@ -31,7 +31,7 @@ class IrProxy::Config
 
   # @return [Hash]
   def to_h
-    @loaded ||= file.parse
+    freeze.loaded
   end
 
   # @param [String|Symbol] key
@@ -39,6 +39,16 @@ class IrProxy::Config
   # @return [Object]
   def [](key)
     self.to_h[key]
+  end
+
+  def freeze
+    self.tap do
+      unless self.frozen?
+        (@loaded ||= file.parse).tap { @loaded.freeze }
+
+        super
+      end
+    end
   end
 
   protected
