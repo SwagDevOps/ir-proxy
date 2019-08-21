@@ -11,6 +11,7 @@
   'process_manager': -> { ProcessManager.new },
   'events_dispatcher': -> { Events::Dispatcher.new },
   'key_scanner': -> { KeyScan },
+  'config': -> { Config.new },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
   'events:key.down': -> { Events::KeyDown.new },
