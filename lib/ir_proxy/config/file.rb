@@ -10,7 +10,9 @@ require_relative '../config'
 require 'sys/proc'
 require 'pathname'
 
-# Provide config access
+# Read config file
+#
+#
 class IrProxy::Config::File < Pathname
   autoload(:XDG, 'xdg')
   autoload(:YAML, 'yaml')
