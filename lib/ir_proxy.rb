@@ -30,6 +30,7 @@ module IrProxy
   {
     VERSION: 'version',
     Cli: 'cli',
+    Config: 'config',
     Container: 'container',
     Events: 'events',
     FileLock: 'file_lock',
