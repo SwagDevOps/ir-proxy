@@ -1,5 +1,11 @@
 <!-- ( vim: set fenc=utf-8 spell spl=en: ) -->
 
+## Samples
+
+```sh
+bundle exec bin/ir-sampler | env sudo -u "$(whoami)" bundle exec bin/ir-proxy
+```
+
 ## Resources
 
 * [ir-keytable on the Orange Pi Zero](https://www.sigmdel.ca/michel/ha/opi/ir_03_en.html)
