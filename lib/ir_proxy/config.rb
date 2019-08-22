@@ -41,11 +41,11 @@ class IrProxy::Config
     self.to_h[key]
   end
 
+  # @return [self]
   def freeze
     self.tap do
       unless self.frozen?
         (@loaded ||= file.parse).tap { @loaded.freeze }
-
         super
       end
     end

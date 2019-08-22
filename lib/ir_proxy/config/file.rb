@@ -11,8 +11,6 @@ require 'sys/proc'
 require 'pathname'
 
 # Read config file
-#
-#
 class IrProxy::Config::File < Pathname
   autoload(:XDG, 'xdg')
   autoload(:YAML, 'yaml')
