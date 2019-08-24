@@ -1,0 +1,8 @@
+---
+|
+  lirc protocol(rc6_mce): scancode = 0x800f041b
+  EV_MSC(0x04): scancode = 0x800f041b
+  event type EV_KEY(0x01) key_down: KEY_PREVIOUS(0x019c)
+  event type EV_SYN(0x00).
+  event type EV_KEY(0x01) key_up: KEY_PREVIOUS(0x019c)
+  event type EV_SYN(0x00).
