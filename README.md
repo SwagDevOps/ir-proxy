@@ -11,6 +11,7 @@ bundle exec bin/ir-sampler | env sudo -u "$(whoami)" bundle exec bin/ir-proxy
 
 ```sh
 sudo ir-keytable -D 500 -P 500 -t
+sudo socat - EXEC:'ir-keytable -D 500 -P 500 -t',pty,setsid,ctty
 ```
 
 ## Resources
