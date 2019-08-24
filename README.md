@@ -6,6 +6,13 @@
 bundle exec bin/ir-sampler | env sudo -u "$(whoami)" bundle exec bin/ir-proxy
 ```
 
+## Commands
+
+
+```sh
+sudo ir-keytable -D 500 -P 500 -t
+```
+
 ## Resources
 
 * [ir-keytable on the Orange Pi Zero](https://www.sigmdel.ca/michel/ha/opi/ir_03_en.html)
