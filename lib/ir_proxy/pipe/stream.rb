@@ -10,13 +10,21 @@ require_relative '../pipe'
 
 # Read from ``STDIN``
 class IrProxy::Pipe::Stream
-  def initialize(io)
+  autoload(:Fcntl, 'fcntl')
+
+  def initialize(io, io_mode = nil)
     @io = io
     @buffer = []
+    # @formatter:off
+    (io_mode || Fcntl::O_NDELAY | Fcntl::O_NONBLOCK | Fcntl::O_RDONLY)
+      .tap { |v| @io_mode = v }
+    # @formatter:on
   end
 
   def listen
     io.sync = true
+    io.fcntl(Fcntl::F_SETFL, io_mode)
+
     until io.eof
       io.read_nonblock(1).tap { |char| buffer.push(char) }
 
@@ -42,4 +50,7 @@ class IrProxy::Pipe::Stream
   #
   # @return [Array<String>]
   attr_reader :buffer
+
+  # @return [Fixnum]
+  attr_reader :io_mode
 end
