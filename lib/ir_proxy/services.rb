@@ -16,5 +16,8 @@
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
   'events:key.down': -> { Events::KeyDown.new },
+  # adapters --------------------------------------------------------
+  'adapter': -> { Adapter.instance },
+  'adapters:xdotool': -> { Adapter::Xdotool.new },
 }
 # @formatter:on
