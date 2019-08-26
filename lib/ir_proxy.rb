@@ -29,6 +29,7 @@ module IrProxy
   # @formatter:off
   {
     VERSION: 'version',
+    Adapter: 'adapter',
     Cli: 'cli',
     Config: 'config',
     Container: 'container',
