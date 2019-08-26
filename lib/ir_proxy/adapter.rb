@@ -8,7 +8,9 @@
 
 require_relative '../ir_proxy'
 
-# Provide config access
+# Provide adapters access
+#
+# Act as a factory, where target is implicit and based on ``config``.
 class IrProxy::Adapter
   # @formatter:off
   {
