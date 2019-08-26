@@ -25,7 +25,7 @@ class IrProxy::Adapter
     # @return [IrProxy::Adapter::Adapter]
     def instance(**kwargs)
       (kwargs[:config] || IrProxy[:config]).to_h.tap do |config|
-        (config.fetch(:adapter, {})['name'] || 'xdotool').to_sym.tap do |k|
+        config.fetch(:adapter, {}).fetch('name', 'xdotool').to_sym.tap do |k|
           return self.fetch(k)
         end
       end
