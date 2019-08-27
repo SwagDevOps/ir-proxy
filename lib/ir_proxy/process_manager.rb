@@ -32,6 +32,7 @@ class IrProxy::ProcessManager
     self.env = ENV.to_h.freeze
     self.state = State.new(timeout: 5)
     self.managed = managed
+    self.terminated = false
 
     yield(handle(&block)) if block
   end
@@ -80,16 +81,25 @@ class IrProxy::ProcessManager
     exit(0) if self.managed?
   end
 
+  # @return [Boolean]
+  def terminated?
+    self.terminated
+  end
+
   # Terminate process and subprocesses.
   #
   # @return [self]
   def terminate
+    return self if self.terminated?
+
     self.tap do
       warn("Terminating (#{$PROCESS_ID})...")
       self.state.clear
       exit(0) if self.managed?
     rescue Timeout::Error
       Process.kill(:HUP, -self.pgid) if self.managed?
+    ensure
+      self.terminated = true
     end
   end
 
@@ -103,6 +113,9 @@ class IrProxy::ProcessManager
 
   # @return [Boolean]
   attr_reader :managed
+
+  # @return [Boolean]
+  attr_accessor :terminated
 
   # Set running (and prepare instance to assume its role).
   #
