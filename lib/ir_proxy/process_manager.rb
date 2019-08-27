@@ -88,14 +88,15 @@ class IrProxy::ProcessManager
 
   # Terminate process and subprocesses.
   #
+  # @param [Fixnum] status
+  #
   # @return [self]
-  def terminate
+  def terminate(status = 0)
     return self if self.terminated?
 
     self.tap do
-      warn("Terminating (#{$PROCESS_ID})...")
-      self.state.clear
-      exit(0) if self.managed?
+      self.terminate_warn(status).state.clear
+      exit(status) if self.managed?
     rescue Timeout::Error
       Process.kill(:HUP, -self.pgid) if self.managed?
     ensure
@@ -104,6 +105,14 @@ class IrProxy::ProcessManager
   end
 
   protected
+
+  def terminate_warn(status)
+    self.tap do
+      { pid: $PROCESS_ID, status: status }.tap do |str|
+        warn("Terminating #{str}...")
+      end
+    end
+  end
 
   # @return [Hash{String => String}]
   attr_accessor :env
