@@ -12,11 +12,4 @@ require 'sys/proc'
 
 Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
 
-IrProxy[:process_manager].handle do |manager|
-  IrProxy::Cli.call.tap do |process|
-    process.to_i.tap do |stt|
-      # exit(stt)
-      manager.terminate if stt.zero?
-    end
-  end
-end
+IrProxy[:cli].call
