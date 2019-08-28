@@ -12,15 +12,13 @@ require_relative '../ir_proxy'
 #
 # Mostly an entry-point for CLI.
 class IrProxy::Cli
-  def call
-    IrProxy::Pipe.new.tap(&:call)
+  # @formatter:off
+  {
+    Command: 'command',
+  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("cli/#{fp}")) }
+  # @formatter:on
 
-    0
-  end
-
-  class << self
-    def call
-      self.new.call
-    end
+  def call(given_args = ARGV)
+    Command.start(given_args.clone)
   end
 end
