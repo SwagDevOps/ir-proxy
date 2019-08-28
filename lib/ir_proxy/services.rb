@@ -13,6 +13,8 @@
   'key_scanner': -> { KeyScan },
   'config': -> { Config.new.freeze },
   'lock': -> { FileLock.new },
+  'cli': -> { Cli.new },
+  'sampler': -> { Sampler.new },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
   'events:key.down': -> { Events::KeyDown.new },
