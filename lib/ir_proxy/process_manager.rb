@@ -28,10 +28,10 @@ class IrProxy::ProcessManager
   }.each { |s, fp| autoload(s, "#{__dir__}/process_manager/#{fp}") }
   # @formatter:on
 
-  def initialize(managed = true, &block)
+  def initialize(**kwargs, &block)
     self.env = ENV.to_h.freeze
     self.state = State.new(timeout: 5)
-    self.managed = managed
+    self.managed = !!(kwargs[:managed])
     self.terminated = false
 
     yield(handle(&block)) if block
@@ -74,7 +74,8 @@ class IrProxy::ProcessManager
   # Manage given block.
   #
   # @yield [ProcessManager]
-  def handle
+  def handle(**kwargs)
+    self.managed = true if kwargs[:managed]
     yield(self)
 
     sleep(0.05) until state.clean.empty?
