@@ -18,6 +18,11 @@ class IrProxy::Cli
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("cli/#{fp}")) }
   # @formatter:on
 
+  # Execute CLI.
+  #
+  # @param [Array<String>] given_args
+  #
+  # @return [void]
   def call(given_args = ARGV)
     Command.start(given_args.clone)
   end

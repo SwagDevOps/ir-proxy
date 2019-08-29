@@ -15,9 +15,7 @@ class IrProxy::Cli
   end
 end
 
-# Describe main CLI.
-#
-# Mostly an entry-point for CLI.
+# Describe available commands.
 class IrProxy::Cli::Command
   desc('pipe', 'React to STDIN events')
 
