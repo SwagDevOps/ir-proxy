@@ -3,7 +3,7 @@
 ## Samples
 
 ```sh
-bundle exec bin/ir-sampler | env sudo -u "$(whoami)" bundle exec bin/ir-proxy
+bundle exec bin/ir-proxy sample | env sudo -u "$(whoami)" bundle exec bin/ir-proxy pipe
 ```
 
 ## Commands
