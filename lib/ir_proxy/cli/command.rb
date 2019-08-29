@@ -22,6 +22,8 @@ class IrProxy::Cli::Command
   desc('pipe', 'React to STDIN events')
 
   # React to event received through (CLI) given STDIN pipe.
+  #
+  # @return [void]
   def pipe
     process { IrProxy::Pipe.new.tap(&:call) }
   end
@@ -29,6 +31,8 @@ class IrProxy::Cli::Command
   desc('sample', 'Print samples on STDOUT')
 
   # Print samples periodically on STDOUT.
+  #
+  # @return [void]
   def sample
     IrProxy[:sampler].tap(&:call)
   end
@@ -36,6 +40,8 @@ class IrProxy::Cli::Command
   protected
 
   # Execute given block surrounded by proces manager.
+  #
+  # @return [void]
   def process(&block)
     0.tap do |status|
       IrProxy[:process_manager].handle(managed: true) do |manager|
