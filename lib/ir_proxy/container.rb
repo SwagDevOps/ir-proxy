@@ -42,6 +42,9 @@ class IrProxy::Container
       (instance.is_a?(Proc) ? constructors : dependencies)
         .merge!(id.to_sym => instance)
       # @formatter:on
+      if dependencies.key?(id.to_sym) and constructors.key?(id.to_sym)
+        constructors.delete(id.to_sym)
+      end
     end
   end
 
