@@ -17,7 +17,7 @@ class IrProxy::Adapter::Adapter
 
   def initialize(**kwargs)
     @executable = kwargs[:executbale] || self.class.executable
-    @config = kwargs[:config] || IrProxy[:config]
+    @config = kwargs[:config]
     (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
       @process_manager = pm
     end
@@ -27,7 +27,7 @@ class IrProxy::Adapter::Adapter
   #
   # @return [String|nil]
   def trans(key_name)
-    config[:keymap][key_name.to_s]
+    config[:keymap] & [key_name.to_s]
   end
 
   # Get a command line for given key name.
@@ -45,11 +45,13 @@ class IrProxy::Adapter::Adapter
 
   protected
 
-  # @return [IrPoxy::Config]
-  attr_reader :config
-
   # @return [IrProxy::ProcessManager]
   attr_reader :process_manager
+
+  # @return [IrPoxy::Config]
+  def config
+    @config ||= IrProxy[:config]
+  end
 
   class << self
     attr_accessor :executable
