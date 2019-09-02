@@ -56,8 +56,6 @@ module IrProxy
       @container ||= Container.instance.tap do |container|
         if container.empty?
           services.each { |k, v| container.set(k, v) }
-
-          container.freeze unless container.frozen?
         end
       end
     end
