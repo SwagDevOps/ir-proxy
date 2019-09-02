@@ -16,11 +16,16 @@ class IrProxy::Config::File < Pathname
   autoload(:YAML, 'yaml')
 
   # @param [String] path
-  def initialize(path = nil)
+  def initialize(path = nil, **options)
+    self.optional = !!(options[:optional])
     (path || lambda do
       Pathname.new(XDG['CONFIG_HOME'].to_s)
           .join(Sys::Proc.progname, 'config.yml')
     end.call).tap { |fp| super(fp) }
+  end
+
+  def optional?
+    self.optional
   end
 
   # Read (and parse) config file.
@@ -30,7 +35,14 @@ class IrProxy::Config::File < Pathname
     YAML.safe_load(self.read).tap do |h|
       return h.map { |k, v| [k.to_sym, v] }.to_h.freeze
     end
-  rescue Errno::ENOENT
-    {}
+  rescue Errno::ENOENT => e
+    return {} if optional?
+
+    raise e
   end
+
+  protected
+
+  # @ertrun [Boolean]
+  attr_accessor :optional
 end

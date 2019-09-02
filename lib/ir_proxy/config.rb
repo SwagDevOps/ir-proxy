@@ -17,8 +17,8 @@ class IrProxy::Config
   attr_reader :file
 
   # @param [String] file
-  def initialize(file = nil)
-    @file = File.new(file)
+  def initialize(file = nil, **options)
+    @file = File.new(file, **options)
     @loaded = nil
   end
 
