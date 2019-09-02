@@ -18,11 +18,18 @@ end
 # Describe available commands.
 class IrProxy::Cli::Command
   desc('pipe', 'React to STDIN events')
+  option(:config, type: :string)
 
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
   def pipe
+    if options[:config]
+      IrProxy::Config.new(options[:config]).tap do |config|
+        IrProxy.container.set(:config, config)
+      end
+    end
+
     process { IrProxy::Pipe.new.tap(&:call) }
   end
 
