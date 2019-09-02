@@ -16,6 +16,7 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
   end
 
   def initialize(**kwargs)
+    @adapter = kwargs[:adapter]
     (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
       @process_manager = pm
     end
@@ -25,4 +26,9 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
 
   # @return [IrProxy::ProcessManager]
   attr_reader :process_manager
+
+  # @return [IrProxy::Adapter::Adapter]
+  def adapter
+    @adapter ||= IrProxy[:adapter]
+  end
 end
