@@ -11,7 +11,7 @@
   'process_manager': -> { ProcessManager.new },
   'events_dispatcher': -> { Events::Dispatcher.new },
   'key_scanner': -> { KeyScan },
-  'config': -> { Config.new.freeze },
+  'config': -> { IrProxy::Config.new(nil, optional: true).freeze },
   'lock': -> { FileLock.new },
   'cli': -> { Cli.new },
   'sampler': -> { Sampler.new },
