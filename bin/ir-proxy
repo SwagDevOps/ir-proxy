@@ -2,14 +2,13 @@
 # frozen_string_literal: true
 
 autoload(:Pathname, 'pathname')
+require 'sys/proc'
+Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
+
 Pathname.new(__dir__).join('../lib', 'ir_proxy.rb').tap do |file|
   # noinspection RubyResolve
   require_relative file if file.file?
 end
 
 autoload(:IrProxy, 'ir_proxy')
-require 'sys/proc'
-
-Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
-
 IrProxy[:cli].call
