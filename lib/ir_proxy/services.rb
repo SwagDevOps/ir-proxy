@@ -6,8 +6,11 @@
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
+require 'sys/proc'
+
 # @formatter:off
 {
+  'progname': Sys::Proc.progname,
   'process_manager': -> { ProcessManager.new },
   'events_dispatcher': -> { Events::Dispatcher.new },
   'key_scanner': -> { KeyScan },
@@ -15,6 +18,7 @@
   'lock': -> { FileLock.new },
   'cli': -> { Cli.new },
   'sampler': -> { Sampler.new },
+  'logger': -> { Logger.new('/dev/stdout', progname: IrProxy[:progname]) },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { Events::LineIncoming.new },
   'events:key.down': -> { Events::KeyDown.new },
