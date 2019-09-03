@@ -36,6 +36,7 @@ module IrProxy
     Events: 'events',
     FileLock: 'file_lock',
     KeyScan: 'key_scan',
+    Logger: 'logger',
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
     Sampler: 'sampler'
