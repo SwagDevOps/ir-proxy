@@ -27,7 +27,7 @@ class IrProxy::Adapter::Adapter
   #
   # @return [String|nil]
   def trans(key_name)
-    config[:keymap] & [key_name.to_s]
+    (config[:keymap] || {}).fetch(key_name.to_s, nil)
   end
 
   # Get a command line for given key name.
