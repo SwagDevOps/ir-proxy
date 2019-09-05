@@ -11,6 +11,7 @@ require_relative '../ir_proxy'
 # Provide config access
 class IrProxy::Config
   autoload(:Pathname, 'pathname')
+  autoload(:XDG, 'xdg')
   autoload(:File, "#{__dir__}/config/file")
 
   # @return [IrProxy::Config::File]
@@ -18,7 +19,8 @@ class IrProxy::Config
 
   # @param [String] file
   def initialize(file = nil, **options)
-    @file = File.new(file, **options)
+    @progname = options[:progname] || IrProxy[:progname]
+    @file = File.new(file || default_file, **options)
     @loaded = nil
   end
 
@@ -55,4 +57,12 @@ class IrProxy::Config
 
   # @return [Hash]
   attr_reader :loaded
+
+  # @return [String]
+  attr_reader :progname
+
+  # @returm [Pathname]
+  def default_file
+    Pathname.new(XDG['CONFIG_HOME'].to_s).join(progname, 'config.yml')
+  end
 end

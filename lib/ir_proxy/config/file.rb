@@ -12,16 +12,12 @@ require 'pathname'
 
 # Read config file
 class IrProxy::Config::File < Pathname
-  autoload(:XDG, 'xdg')
   autoload(:YAML, 'yaml')
 
   # @param [String] path
-  def initialize(path = nil, **options)
+  def initialize(path, **options)
+    super(path)
     self.optional = !!(options[:optional])
-    (path || lambda do
-      Pathname.new(XDG['CONFIG_HOME'].to_s)
-          .join(Sys::Proc.progname, 'config.yml')
-    end.call).tap { |fp| super(fp) }
   end
 
   def optional?
@@ -45,4 +41,7 @@ class IrProxy::Config::File < Pathname
 
   # @ertrun [Boolean]
   attr_accessor :optional
+
+  # @return [String]
+  attr_accessor :progname
 end
