@@ -46,7 +46,9 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
       return self unless logger
 
       Thread.new do
-        "key down #{keyscan.name}".tap { |s| logger.debug(s) }
+        [keyscan.name.to_s, adapter.trans(keyscan.name)].tap do |k, v|
+          "key down #{k.inspect} -> #{v.inspect}".tap { |s| logger.debug(s) }
+        end
       end
     end
   end
