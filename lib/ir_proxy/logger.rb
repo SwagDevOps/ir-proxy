@@ -26,8 +26,7 @@ class IrProxy::Logger < ::Logger
     proc do |severity, datetime, progname, msg|
       [
         datetime.strftime('%Y-%m-%d %H:%M:%S.%6N'),
-        severity[0],
-        "#{progname}[#{Process.pid}]:",
+        "#{severity[0]}[#{Process.pid}]:",
         "#{msg}\n"
       ].join(' ')
     end
