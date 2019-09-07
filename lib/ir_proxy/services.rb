@@ -24,6 +24,7 @@ require 'sys/proc'
   'events:key.down': -> { Events::KeyDown.new },
   # adapters --------------------------------------------------------
   'adapter': -> { Adapter.instance },
+  'adapters:dummy': -> { Adapter::Dummy.new },
   'adapters:xdotool': -> { Adapter::Xdotool.new },
 }
 # @formatter:on
