@@ -15,6 +15,7 @@ class IrProxy::Adapter
   # @formatter:off
   {
     Adapter: 'adapter',
+    Dummy: 'dummy',
     Xdotool: 'xdotool',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("adapter/#{fp}")) }
   # @formatter:on
