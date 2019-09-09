@@ -33,7 +33,7 @@ class IrProxy::Config
 
   # @return [Hash]
   def to_h
-    freeze.loaded
+    loaded.dup
   end
 
   # @param [String|Symbol] key
@@ -41,6 +41,22 @@ class IrProxy::Config
   # @return [Object]
   def [](key)
     self.to_h[key]
+  end
+
+  # Set given `key` to given `value`.
+  #
+  # @param [String|Symbol] key
+  # @param [Object] value
+  # @return [Object]
+  def []=(key, value)
+    value.tap do
+      Hash.new(@loaded).tap do |loaded|
+        @loaded = proc do
+          loaded[key] = value
+          loaded.clone.freeze
+        end.call
+      end
+    end
   end
 
   # @return [self]
