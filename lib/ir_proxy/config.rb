@@ -33,7 +33,7 @@ class IrProxy::Config
 
   # @return [Hash]
   def to_h
-    loaded.dup
+    self.loaded.clone
   end
 
   # @param [String|Symbol] key
@@ -50,11 +50,9 @@ class IrProxy::Config
   # @return [Object]
   def []=(key, value)
     value.tap do
-      Hash.new(@loaded).tap do |loaded|
-        @loaded = proc do
-          loaded[key] = value
-          loaded.clone.freeze
-        end.call
+      self.to_h.dup.tap do |loaded|
+        loaded[key] = value
+        @loaded = loaded.clone.freeze
       end
     end
   end
@@ -63,7 +61,7 @@ class IrProxy::Config
   def freeze
     self.tap do
       unless self.frozen?
-        (@loaded ||= file.parse).tap { @loaded.freeze }
+        loaded.tap { @loaded.freeze }
         super
       end
     end
@@ -71,11 +69,15 @@ class IrProxy::Config
 
   protected
 
-  # @return [Hash]
-  attr_reader :loaded
-
   # @return [String]
   attr_reader :progname
+
+  # @return [Hash]
+  def loaded
+    @loaded = file.parse if @loaded.nil?
+
+    @loaded
+  end
 
   # @returm [Pathname]
   def default_file
