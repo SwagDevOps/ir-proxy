@@ -19,6 +19,9 @@ module IrProxy::Cli::Command::Behavior
     on_start(options, [:config, :adapter], &block)
   end
 
+  # Block surrounding `sample` command.
+  #
+  # @param [Hash] options
   def on_sample(options, &block)
     on_start(options, [], &block)
   end
