@@ -15,9 +15,13 @@ class IrProxy::Adapter::Adapter
   # @return [String]
   attr_reader :executable
 
+  # @return [String]
+  attr_reader :name
+
   def initialize(**kwargs)
     @executable = kwargs[:executbale] || self.class.executable
     @config = kwargs[:config]
+    @name = self.class.identifier
     (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
       @process_manager = pm
     end
@@ -29,6 +33,19 @@ class IrProxy::Adapter::Adapter
   def trans(key_name)
     (config[:keymap] || {}).fetch(key_name.to_s, nil).tap do |v|
       return v.nil? ? nil : v.to_s
+    end
+  end
+
+  class << self
+    # Get adapter identifier.
+    #
+    # @return [String]
+    def identifier
+      Dry::Inflector.new.tap do |inf|
+        self.name.split('::')[-1].tap do |name|
+          return inf.underscore(name)
+        end
+      end
     end
   end
 
