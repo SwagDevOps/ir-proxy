@@ -19,10 +19,14 @@ module IrProxy::Cli::Command::Behavior
     on_start(options, [:config, :adapter], &block)
   end
 
+  def on_sample(options, &block)
+    on_start(options, [], &block)
+  end
+
   # @param [Hash] options
   # @paran [Array<String|Symbol>] appliables
   def on_start(options, appliables = [], &block)
-    appliables.each { |m| self.__send__("apply_#{m}", options) }
+    appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
 
     [:config].each { |k| IrProxy[k].freeze }
 
