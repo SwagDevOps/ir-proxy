@@ -11,26 +11,30 @@ require_relative '../cli'
 # @api
 class IrProxy::Cli
   autoload(:Thor, 'thor')
+
+  # @api
   class Command < Thor
+    # @formatter:off
+    {
+      Behavior: 'behavior',
+    }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("command/#{fp}")) }
+    # @formatter:on
   end
 end
 
 # Describe available commands.
 class IrProxy::Cli::Command
+  include(Behavior)
+
   desc('pipe', 'React to STDIN events')
   option(:config, type: :string)
+  option(:adapter, type: :string)
 
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
   def pipe
-    if options[:config]
-      IrProxy::Config.new(options[:config]).tap do |config|
-        IrProxy.container.set(:config, config)
-      end
-    end
-
-    process { IrProxy::Pipe.new.tap(&:call) }
+    on_pipe(options) { IrProxy::Pipe.new.tap(&:call) }
   end
 
   desc('sample', 'Print samples on STDOUT')
@@ -39,23 +43,6 @@ class IrProxy::Cli::Command
   #
   # @return [void]
   def sample
-    IrProxy[:sampler].tap(&:call)
-  end
-
-  protected
-
-  # Execute given block surrounded by proces manager.
-  #
-  # @return [void]
-  def process(&block)
-    0.tap do |status|
-      IrProxy[:process_manager].handle(managed: true) do |manager|
-        block.call
-      rescue SystemExit => e
-        status = e.status
-      ensure
-        manager.terminate(status)
-      end
-    end
+    on_sample(options) { IrProxy[:sampler].tap(&:call) }
   end
 end
