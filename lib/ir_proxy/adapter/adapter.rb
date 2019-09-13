@@ -27,12 +27,29 @@ class IrProxy::Adapter::Adapter
     end
   end
 
+  def dummy?
+    name == :dummy
+  end
+
   # Get mapping for given key name.
   #
   # @return [String|nil]
   def trans(key_name)
     (config[:keymap] || {}).fetch(key_name.to_s, nil).tap do |v|
       return v.nil? ? nil : v.to_s
+    end
+  end
+
+  # Execute action for given keyscan
+  #
+  # @param [IrProxy::KeyScan] keyscan
+  def call(keyscan)
+    keyscan.name.tap do |key_name|
+      command_for(key_name).tap do |command|
+        process_manager.sh(*command) if command
+
+        return command
+      end
     end
   end
 
@@ -43,7 +60,7 @@ class IrProxy::Adapter::Adapter
     def identifier
       Dry::Inflector.new.tap do |inf|
         self.name.split('::')[-1].tap do |name|
-          return inf.underscore(name)
+          return inf.underscore(name).to_sym
         end
       end
     end
