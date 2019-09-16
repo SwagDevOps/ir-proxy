@@ -10,9 +10,21 @@ require_relative '../events'
 
 # Intercept and process key down events
 class IrProxy::Events::KeyDown < IrProxy::Events::Listener
+  autoload(:Shellwords, 'shellwords')
+
   # @param [IrProx::KeyScan] keyscan
   def call(keyscan)
-    log_keyscan(keyscan)
+    [keyscan.name.to_s, adapter.trans(keyscan.name)].tap do |k, v|
+      log("key down #{k.inspect} -> #{v.inspect}", severity: :info)
+    end
+
+    adapter.call(keyscan).tap do |command|
+      unless adapter.dummy?
+        (command ? Shellwords.join(command) : command).tap do |s|
+          log("command : #{s.inspect}", severity: :debug)
+        end
+      end
+    end
   end
 
   def initialize(**kwargs)
@@ -38,18 +50,9 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
     @logger ||= IrProxy[:logger]
   end
 
-  # @param [IrProx::KeyScan] keyscan
-  #
-  # @return [self]
-  def log_keyscan(keyscan)
-    self.tap do
-      return self unless logger
+  def log(message, **kwargs)
+    return self unless logger
 
-      Thread.new do
-        [keyscan.name.to_s, adapter.trans(keyscan.name)].tap do |k, v|
-          "key down #{k.inspect} -> #{v.inspect}".tap { |s| logger.debug(s) }
-        end
-      end
-    end
+    Thread.new { logger.public_send(kwargs[:severity] || :debug, message) }
   end
 end
