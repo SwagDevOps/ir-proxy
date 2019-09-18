@@ -33,6 +33,7 @@ class IrProxy::ProcessManager
     self.state = State.new(timeout: 5)
     self.managed = !!(kwargs[:managed])
     self.terminated = false
+    self.terminating = false
 
     yield(handle(&block)) if block
   end
@@ -87,32 +88,43 @@ class IrProxy::ProcessManager
     self.terminated
   end
 
+  # @return [Boolean]
+  def terminating?
+    self.terminating
+  end
+
   # Terminate process and subprocesses.
   #
   # @param [Fixnum] status
   #
   # @return [self]
   def terminate(status = 0)
-    return self if self.terminated?
+    return self if self.terminated? || self.terminating?
 
-    self.tap do
-      self.terminate_warn(status).state.clear
-      exit(status) if self.managed?
-    rescue Timeout::Error
-      Process.kill(:HUP, -self.pgid) if self.managed?
-    ensure
-      self.terminated = true
-    end
+    self.terminating = true
+    sleep(0.5)
+    self.terminate_warn(status).abort(status)
   end
 
   protected
 
+  # @return [self]
   def terminate_warn(status)
     self.tap do
       { pid: $PROCESS_ID, status: status }.tap do |str|
         warn("Terminating #{str}...")
       end
     end
+  end
+
+  def abort(status = 0)
+    self.terminating = true
+    state.clear
+    exit(status) if self.managed?
+  rescue Timeout::Error
+    Process.kill(:HUP, -self.pgid) if self.managed?
+  ensure
+    self.terminated = true
   end
 
   # @return [Hash{String => String}]
@@ -127,6 +139,9 @@ class IrProxy::ProcessManager
   # @return [Boolean]
   attr_accessor :terminated
 
+  # @return [Boolean]
+  attr_accessor :terminating
+
   # Set running (and prepare instance to assume its role).
   #
   # @param [Boolean] flag
@@ -134,7 +149,7 @@ class IrProxy::ProcessManager
     # noinspection RubySimplifyBooleanInspection
     (!!flag).tap do |managed|
       if !managed? and managed
-        [:INT, :TERM].each do |sign|
+        [:SIGINT, :INT, :TERM].each do |sign|
           Signal.trap(sign) { self.terminate }
         end
 
