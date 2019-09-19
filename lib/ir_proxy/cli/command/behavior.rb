@@ -27,7 +27,7 @@ module IrProxy::Cli::Command::Behavior
   end
 
   # @param [Hash] options
-  # @paran [Array<String|Symbol>] appliables
+  # @param [Array<String|Symbol>] appliables
   def on_start(options, appliables = [], &block)
     appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
 
