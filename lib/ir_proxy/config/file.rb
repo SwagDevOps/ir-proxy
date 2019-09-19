@@ -39,7 +39,7 @@ class IrProxy::Config::File < Pathname
 
   protected
 
-  # @ertrun [Boolean]
+  # @return [Boolean]
   attr_accessor :optional
 
   # @return [String]
