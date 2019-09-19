@@ -79,7 +79,7 @@ class IrProxy::Config
     @loaded
   end
 
-  # @returm [Pathname]
+  # @return [Pathname]
   def default_file
     Pathname.new(XDG['CONFIG_HOME'].to_s).join(progname, 'config.yml')
   end
