@@ -4,6 +4,7 @@
 source 'https://rubygems.org'
 
 group :default do
+  gem 'chrono_logger', '~> 1.1'
   gem 'concurrent-ruby', '~> 1.1'
   gem 'kamaze-version', '~> 1.0'
   gem 'sys-proc', '~> 1.1'
