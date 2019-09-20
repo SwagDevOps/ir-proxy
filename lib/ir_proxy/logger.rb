@@ -9,13 +9,14 @@
 require_relative '../ir_proxy'
 require 'logger'
 require 'dry/inflector'
+require 'chrono_logger'
 
 # Provide logging facility.
-class IrProxy::Logger < ::Logger
+class IrProxy::Logger < ::ChronoLogger
   attr_reader :progname
 
   def initialize(*args, **kwargs)
-    super
+    super(*args)
     @progname = kwargs[:progname]
     @adapter = kwargs[:adapter]
     self.formatter = make_formatter
