@@ -16,24 +16,29 @@ module IrProxy::Cli::Command::Behavior
   #
   # @param [Hash] options
   def on_pipe(options, &block)
-    on_start(options, [:config, :adapter], &block)
+    on_start(:pipe, options, [:config, :adapter], &block)
   end
 
   # Block surrounding `sample` command.
   #
   # @param [Hash] options
   def on_sample(options, &block)
-    on_start(options, [], &block)
+    on_start(:sample, options, [], &block)
   end
 
+  # @param [String] command_name
   # @param [Hash] options
   # @param [Array<String|Symbol>] appliables
-  def on_start(options, appliables = [], &block)
+  def on_start(command_name, options, appliables = [], &block)
     appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
 
     [:config].each { |k| IrProxy[k].freeze }
 
-    process { block.call }
+    if command_name.to_sym == :pipe
+      process { block.call }
+    else
+      block.call
+    end
   end
 
   # Apply `config` option.
