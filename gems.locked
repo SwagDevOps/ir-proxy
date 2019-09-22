@@ -126,7 +126,7 @@ DEPENDENCIES
   sham (~> 2.0)
   sys-proc (~> 1.1)
   thor (~> 0.20)
-  xdg (~> 2.2)
+  xdg (>= 2.2, < 3.0)
   yard (~> 0.9)
   yard-coderay (~> 0.1)
 
