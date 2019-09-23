@@ -35,6 +35,8 @@ class IrProxy::ProcessManager
     self.terminated = false
     self.terminating = false
 
+    @logger = kwargs[:logger]
+
     yield(handle(&block)) if block
   end
 
@@ -108,24 +110,8 @@ class IrProxy::ProcessManager
 
   protected
 
-  # @return [self]
-  def terminate_warn(status)
-    self.tap do
-      { pid: $PROCESS_ID, status: status }.tap do |str|
-        warn("Terminating #{str}...")
-      end
-    end
-  end
-
-  def abort(status = 0)
-    self.terminating = true
-    state.clear
-    exit(status) if self.managed?
-  rescue Timeout::Error
-    Process.kill(:HUP, -self.pgid) if self.managed?
-  ensure
-    self.terminated = true
-  end
+  # @return [IrProxy::Logger|Logger]
+  attr_reader :logger
 
   # @return [Hash{String => String}]
   attr_accessor :env
@@ -141,6 +127,29 @@ class IrProxy::ProcessManager
 
   # @return [Boolean]
   attr_accessor :terminating
+
+  # @return [self]
+  def terminate_warn(status)
+    # rubocop:disable Style/RescueStandardError
+    self.tap do
+      { pid: $PROCESS_ID, status: status }.tap do |str|
+        logger.warn("terminating #{str}...")
+      rescue
+        warn("terminating #{str}...")
+      end
+    end
+    # rubocop:enable Style/RescueStandardError
+  end
+
+  def abort(status = 0)
+    self.terminating = true
+    state.clear
+    exit(status) if self.managed?
+  rescue Timeout::Error
+    Process.kill(:HUP, -self.pgid) if self.managed?
+  ensure
+    self.terminated = true
+  end
 
   # Set running (and prepare instance to assume its role).
   #
