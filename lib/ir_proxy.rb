@@ -10,8 +10,6 @@ $LOAD_PATH.unshift(__dir__)
 
 # Base module (namespace)
 module IrProxy
-  require 'sys/proc'
-  require 'English'
   autoload(:Pathname, 'pathname')
 
   class << self
@@ -72,6 +70,9 @@ module IrProxy
     protected
 
     def services
+      require 'sys/proc'
+      require 'English'
+
       Pathname.new(__FILE__.gsub(/\.rb$/, '')).join('services.rb').tap do |file|
         return instance_eval(file.read, file.to_s, 1)
       end
