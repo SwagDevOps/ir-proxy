@@ -157,13 +157,13 @@ class IrProxy::ProcessManager
   def managed=(flag)
     # noinspection RubySimplifyBooleanInspection
     (!!flag).tap do |managed|
-      if !managed? and managed
-        [:SIGINT, :INT, :TERM].each do |sign|
-          Signal.trap(sign) { self.terminate }
-        end
+      return self.managed if managed? or !managed
 
-        @managed = managed
+      [:SIGINT, :INT, :TERM].each do |sign|
+        Signal.trap(sign) { self.terminate }
       end
+
+      @managed = managed
     end
   end
 
