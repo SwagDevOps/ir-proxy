@@ -1,0 +1,66 @@
+---
+adapter: { name: xdotool } # default value
+keymap:
+  AUDIO:
+  BLUE:
+  BRIGHTNESSDOWN:
+  BRIGHTNESSUP:
+  CAMERA:
+  CHANNELDOWN:
+  CHANNELUP:
+  DELETE: BackSpace
+  DOWN:
+  DVD:
+  EJECTCD:
+  ENTER:
+  EPG:
+  EXIT:
+  FASTFORWARD: XF86AudioForward
+  GREEN:
+  INFO:
+  LANGUAGE:
+  LEFT:
+  MEDIA:
+  MESSENGER:
+  MODE:
+  MUTE:
+  NEXT: XF86AudioNext
+  NUMERIC_0: 0
+  NUMERIC_1: 1
+  NUMERIC_2: 2
+  NUMERIC_3: 3
+  NUMERIC_4: 4
+  NUMERIC_5: 5
+  NUMERIC_6: 6
+  NUMERIC_7: 7
+  NUMERIC_8: 8
+  NUMERIC_9: 9
+  NUMERIC_POUND:
+  NUMERIC_STAR:
+  OK: XF86Book
+  PAUSE: XF86AudioPause
+  PLAY: XF86AudioPlay
+  PLAYER:
+  PLAYPAUSE:
+  POWER2:
+  PRESENTATION:
+  PREVIOUS: XF86AudioPrev
+  PRINT:
+  PVR:
+  RADIO:
+  RECORD: XF86AudioRecord
+  RED:
+  REWIND: XF86AudioRewind
+  RIGHT:
+  SLEEP:
+  STOP: XF86AudioStop
+  SUBTITLE:
+  TITLE:
+  TUNER:
+  TV:
+  UP:
+  VIDEO:
+  VOLUMEDOWN:
+  VOLUMEUP:
+  YELLOW:
+  ZOOM:
