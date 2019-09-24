@@ -15,12 +15,29 @@ module IrProxy
   class << self
     protected
 
+    # Denote current class is used in a bundled context.
+    #
     # @return [Boolean]
     def bundled?
       # @formatter:off
-      [['gems.rb', 'gems.locked'], ['Gemfile', 'Gemfile.lock']]
-        .map { |m| Dir.glob("#{__dir__}/../#{m}").size >= 2 }
-        .include?(true)
+      [['gems.rb', 'gems.locked'], ['Gemfile', 'Gemfile.lock']].map do |m|
+        Dir.chdir("#{__dir__}/..") do
+          m.map { |f| Pathname(f).file? }.uniq
+        end
+      end.include?([true])
+      # @formatter:on
+    end
+
+    # Denote current class is used in development context.
+    #
+    # @return [Boolean]
+    def development?
+      # @formatter:off
+      [['gemspec.tpl']].map do |m|
+        Dir.chdir("#{__dir__}/..") do
+          m.map { |f| Pathname(f).file? }
+        end
+      end.include?([true])
       # @formatter:on
     end
   end
@@ -44,10 +61,11 @@ module IrProxy
 
   if bundled?
     require 'bundler/setup'
+  end
 
-    if Gem::Specification.find_all_by_name('kamaze-project').any?
-      require 'kamaze/project/core_ext/pp'
-    end
+  if development?
+    require 'pp'
+    require 'kamaze/project/core_ext/pp'
   end
 
   class << self
