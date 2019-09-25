@@ -2,13 +2,15 @@
 # frozen_string_literal: true
 
 autoload(:Pathname, 'pathname')
-require 'sys/proc'
-Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
-
-Pathname.new(__dir__).join('../lib', 'ir_proxy.rb').tap do |file|
-  # noinspection RubyResolve
-  require_relative file if file.file?
+Pathname.new(__dir__).join('..', 'lib/ir_proxy.rb').tap do |file|
+  # noinspection RubyResolve,RubyArgumentParentheses
+  # rubocop:disable Lint/ParenthesesAsGroupedExpression
+  require (file.file? ? file : file.basename('.rb')).to_s
+  # rubocop:enable Lint/ParenthesesAsGroupedExpression
 end
 
+require 'sys/proc'
+
+Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
 autoload(:IrProxy, 'ir_proxy')
 IrProxy[:cli].call
