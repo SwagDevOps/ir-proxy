@@ -110,9 +110,6 @@ class IrProxy::ProcessManager
 
   protected
 
-  # @return [IrProxy::Logger|Logger]
-  attr_reader :logger
-
   # @return [Hash{String => String}]
   attr_accessor :env
 
@@ -128,17 +125,20 @@ class IrProxy::ProcessManager
   # @return [Boolean]
   attr_accessor :terminating
 
+  # @return [IrProxy::Logger|Logger]
+  def logger
+    @logger || IrProxy[:logger]
+  end
+
   # @return [self]
   def terminate_warn(status)
-    # rubocop:disable Style/RescueStandardError
     self.tap do
       { pid: $PROCESS_ID, status: status }.tap do |str|
-        logger.warn("terminating #{str}...")
-      rescue
-        warn("terminating #{str}...")
+        logger.info("terminating #{str}...")
+      rescue StandardError => e
+        warn("terminating #{str} (#{e.message})...")
       end
     end
-    # rubocop:enable Style/RescueStandardError
   end
 
   def abort(status = 0)
