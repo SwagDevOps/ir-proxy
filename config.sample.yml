@@ -9,21 +9,21 @@ keymap:
   CHANNELDOWN:
   CHANNELUP:
   DELETE: BackSpace
-  DOWN:
+  DOWN: Down
   DVD:
   EJECTCD:
-  ENTER:
-  EPG:
-  EXIT:
+  ENTER: KP_Enter
+  EPG: e
+  EXIT: XF86Away
   FASTFORWARD: XF86AudioForward
   GREEN:
   INFO:
   LANGUAGE:
-  LEFT:
+  LEFT: Left
   MEDIA:
   MESSENGER:
   MODE:
-  MUTE:
+  MUTE: XF86AudioMute
   NEXT: XF86AudioNext
   NUMERIC_0: 0
   NUMERIC_1: 1
@@ -35,14 +35,14 @@ keymap:
   NUMERIC_7: 7
   NUMERIC_8: 8
   NUMERIC_9: 9
-  NUMERIC_POUND:
-  NUMERIC_STAR:
+  NUMERIC_POUND: null
+  NUMERIC_STAR: null
   OK: XF86Book
   PAUSE: XF86AudioPause
   PLAY: XF86AudioPlay
   PLAYER:
   PLAYPAUSE:
-  POWER2:
+  POWER2: XF86PowerOff
   PRESENTATION:
   PREVIOUS: XF86AudioPrev
   PRINT:
@@ -51,16 +51,16 @@ keymap:
   RECORD: XF86AudioRecord
   RED:
   REWIND: XF86AudioRewind
-  RIGHT:
+  RIGHT: Right
   SLEEP:
   STOP: XF86AudioStop
   SUBTITLE:
   TITLE:
   TUNER:
   TV:
-  UP:
+  UP: Up
   VIDEO:
-  VOLUMEDOWN:
-  VOLUMEUP:
+  VOLUMEDOWN: XF86AudioLowerVolume
+  VOLUMEUP: XF86AudioRaiseVolume
   YELLOW:
   ZOOM:
