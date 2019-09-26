@@ -12,5 +12,4 @@ end
 require 'sys/proc'
 
 Pathname.new(__FILE__).basename.to_s.tap { |name| Sys::Proc.progname = name }
-autoload(:IrProxy, 'ir_proxy')
 IrProxy[:cli].call
