@@ -28,7 +28,7 @@ class IrProxy::Cli
   #
   # @return [void]
   def call(given_args = ARGV)
-    @events_dispatcher&.boot
+    events_dispatcher&.boot
 
     Command.start(given_args.clone)
   end
