@@ -10,10 +10,28 @@ require_relative '../events'
 
 # Dispatcher.
 class IrProxy::Events::Dispatcher
-  def initialize(**kwargs)
+  def initialize
+    @booted = false
     @listeners = {}
+  end
 
-    listen(**kwargs)
+  # Start dispatcher (provision listeners).
+  #
+  # @return [self]
+  # @todo Use dependency inversion
+  def boot
+    self.tap do
+      unless booted?
+        self.listen(**IrProxy::Events.listeners)
+        @booted = true
+        self.freeze
+      end
+    end
+  end
+
+  # @return [Boolean]
+  def booted?
+    @booted
   end
 
   # Add new listener(s) (by name)
@@ -28,6 +46,7 @@ class IrProxy::Events::Dispatcher
   def listen(**kwargs)
     self.tap do
       kwargs.each do |event_name, listener|
+        pp([event_name, listener.class])
         self.add_listener(event_name, listener)
       end
     end
@@ -63,10 +82,9 @@ class IrProxy::Events::Dispatcher
     end
   end
 
+  # @return [self]
   def freeze
-    listeners.freeze
-
-    super
+    self.tap { listeners.freeze }
   end
 
   protected

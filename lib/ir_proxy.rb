@@ -96,6 +96,4 @@ module IrProxy
       end
     end
   end
-
-  include IrProxy::Events
 end

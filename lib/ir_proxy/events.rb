@@ -20,15 +20,9 @@ module IrProxy::Events
   # @formatter:on
 
   class << self
-    def included(_othermod)
-      self.register
-    end
-
-    protected
-
     def register
       IrProxy[:events_dispatcher].tap do |events_dispatcher|
-        # @type [IrProxy::EventDispatcher] events_dispatcher
+        # @type [IrProxy::Events::Dispatcher] events_dispatcher
         events_dispatcher.listen(listeners)
       end
     end
