@@ -46,7 +46,6 @@ class IrProxy::Events::Dispatcher
   def listen(**kwargs)
     self.tap do
       kwargs.each do |event_name, listener|
-        pp([event_name, listener.class])
         self.add_listener(event_name, listener)
       end
     end
@@ -84,7 +83,7 @@ class IrProxy::Events::Dispatcher
 
   # @return [self]
   def freeze
-    self.tap { listeners.freeze }
+    super.tap { listeners.freeze }
   end
 
   protected
