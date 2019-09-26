@@ -14,14 +14,22 @@ class IrProxy::Config
   autoload(:XDG, 'xdg')
   autoload(:File, "#{__dir__}/config/file")
 
-  # @return [IrProxy::Config::File]
-  attr_reader :file
-
   # @param [String] file
   def initialize(file = nil, **options)
-    @progname = options[:progname] || IrProxy[:progname]
-    @file = File.new(file || default_file, **options)
+    @progname = options[:progname]
+    @file = file
     @loaded = nil
+    @options = options
+  end
+
+  # @return [String]
+  def progname
+    @progname || IrProxy[:progname]
+  end
+
+  # @return [IrProxy::Config::File]
+  def file
+    File.new(@file || default_file, **@options)
   end
 
   # @return [String]
@@ -68,9 +76,6 @@ class IrProxy::Config
   end
 
   protected
-
-  # @return [String]
-  attr_reader :progname
 
   # @return [Hash]
   def loaded
