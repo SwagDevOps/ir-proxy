@@ -16,7 +16,12 @@ class IrProxy::Adapter::Xdotool < IrProxy::Adapter::Adapter
     super.tap do |input|
       return nil if input.nil?
 
-      return [executable, 'key'].push(*input)
+      # @formatter:off
+      return [executable]
+             .append('key')
+             .append(*adapter_config['options'].to_a.map(&:to_s))
+             .append(*input)
+      # @formatter:off
     end
   end
 end
