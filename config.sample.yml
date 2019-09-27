@@ -1,5 +1,7 @@
 ---
-adapter: { name: xdotool } # default value
+adapter:
+  name: xdotool # default value
+  options: ["--clearmodifiers", "--delay", "0"]
 keymap:
   AUDIO:
   BLUE:
