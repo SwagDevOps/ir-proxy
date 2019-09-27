@@ -31,11 +31,25 @@ class IrProxy::Adapter::Adapter
     name == :dummy
   end
 
+  # Get adapter config.
+  #
+  # @return [Hash]
+  def adapter_config
+    config[:adapter] || {}
+  end
+
+  # Get keymap from config
+  #
+  # @return [Hash]
+  def keymap
+    (config[:keymap] || {})
+  end
+
   # Get mapping for given key name.
   #
   # @return [String|nil]
   def trans(key_name)
-    (config[:keymap] || {}).fetch(key_name.to_s, nil).tap do |v|
+    keymap.fetch(key_name.to_s, nil).tap do |v|
       return v.nil? ? nil : v.to_s
     end
   end
