@@ -1,17 +1,34 @@
 <!-- ( vim: set fenc=utf-8 spell spl=en: ) -->
 
-## Samples
+# Proxy for ``ir-keytable``
+
+``ir-proxy`` can be used on a [pipeline][wikipedia:pipeline] to process
+``ir-keytable`` output and propagate key events. It uses adapters
+(``xdotool``) to send key events to the [display server][wikipedia:xorg].
+
+``ir-proxy`` conforms to [XDG Base Directory][freedesktop:basedir-spec],
+as a result, [configuration][file:config] file is located:
 
 ```sh
-bin/ir-proxy sample | env sudo -u "$(whoami)" bin/ir-proxy pipe
+${XDG_CONFIG_HOME:-~/home/.config}/ir-proxy/config.yml
 ```
 
-## Commands
+## Sample startup scripts
 
+Using a dedicated user:
 
 ```sh
-sudo ir-keytable -D 500 -P 500 -t
-sudo socat - EXEC:'ir-keytable -D 500 -P 500 -t',pty,setsid,ctty
+#!/usr/bin/env sh
+
+socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe
+```
+
+Using a global config (run as root):
+
+```sh
+#!/usr/bin/env sh
+
+socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | ir-proxy pipe --config /etc/ir-proxy/config.yml
 ```
 
 ## Extract available keys
@@ -27,3 +44,11 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 * [XF86 keyboard symbols](http://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols)
 * [Keyboard controls - Official Kodi Wiki](https://kodi.wiki/view/Keyboard_controls)
 * [Remote controller tables — The Linux Kernel documentation](https://www.kernel.org/doc/html/v4.14/media/uapi/rc/rc-tables.html)
+
+
+<!-- hyeprlinks -->
+
+[file:config]: ./config.sample.yml
+[wikipedia:pipeline]: https://en.wikipedia.org/wiki/Pipeline_(Unix)
+[wikipedia:xorg]: https://en.wikipedia.org/wiki/X.Org_Server
+[freedesktop:basedir-spec]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
