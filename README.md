@@ -28,7 +28,28 @@ Using a global config (run as root):
 ```sh
 #!/usr/bin/env sh
 
-socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | ir-proxy pipe --config /etc/ir-proxy/config.yml
+socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe --config /etc/ir-proxy/config.yml
+```
+
+Using a loop:
+
+```sh
+#!/usr/bin/env sh
+
+set -eu
+
+export DISPLAY=:0
+export X_USER=user
+export LOGFILE=/tmp/ir-proxy.log
+
+while :; do
+    touch "${LOGFILE}"
+    chown "${X_USER}:$(id -g ${X_USER}" "${LOGFILE}"
+    socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | \
+        (sudo -u "${X_USER}" ir-proxy pipe \
+            --config /etc/ir-proxy/config.yml >> "${LOGFILE}")
+    sleep 1
+done
 ```
 
 ## Extract available keys
