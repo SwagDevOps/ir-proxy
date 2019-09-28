@@ -12,18 +12,18 @@ keymap:
   CHANNELDOWN: Page_Down
   CHANNELUP: Page_Up
   DELETE: BackSpace
-  DOWN: null # or Down
+  DOWN: null # Down
   DVD: null
   EJECTCD: null
-  ENTER: null # already mapped or KP_Enter
+  ENTER: null # KP_Enter
   EPG: e
   EXIT: BackSpace
-  FASTFORWARD: Right
+  FASTFORWARD: f # Right
   GREEN: null
   INFO: i
   LANGUAGE: null
   LEFT: null # or Left
-  MEDIA: F8 # Widndows flag key
+  MEDIA: F12 # flag key
   MESSENGER:
   MODE: null
   MUTE: null # or XF86AudioMute
@@ -42,10 +42,10 @@ keymap:
   NUMERIC_STAR: null
   OK: KP_Enter
   PAUSE: space
-  PLAY: p
+  PLAY: space
   PLAYER: null
   PLAYPAUSE: null
-  POWER2: XF86PowerOff
+  POWER2: null
   PRESENTATION:
   PREVIOUS: Left
   PRINT: null
@@ -53,7 +53,7 @@ keymap:
   RADIO: null
   RECORD: m
   RED: null
-  REWIND: Left
+  REWIND: r # Left
   RIGHT: null # or Right
   SLEEP: null # already mapped
   STOP: x
