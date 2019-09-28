@@ -1,0 +1,6 @@
+---
+inherit_gem:
+  kamaze-project:
+    - .rubocop.yml
+AllCops:
+  TargetRubyVersion: 2.5

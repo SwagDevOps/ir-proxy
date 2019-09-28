@@ -1,0 +1,17 @@
+---
+major: 1
+minor: 0
+patch: 0
+authors: ['Dimitri Arrigoni']
+email: 'dimitri@arrigoni.me'
+date: '2019-09-28'
+summary: 'Proxy for ir-keytable'
+description: 'A simple proxy propagating event seen through ir-keytable'
+homepage: 'https://github.com/SwagDevOps/ir-proxy'
+licenses: ['GPL-3.0']
+license_header: |
+  Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+  License GPLv3+: GNU GPL version 3 or later
+  <http://www.gnu.org/licenses/gpl.html>.
+  This is free software: you are free to change and redistribute it.
+  There is NO WARRANTY, to the extent permitted by law.
