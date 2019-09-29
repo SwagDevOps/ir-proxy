@@ -21,7 +21,7 @@ class IrProxy::Events::KeyDown < IrProxy::Events::Listener
     adapter.call(keyscan).tap do |command|
       unless adapter.dummy?
         (command ? Shellwords.join(command) : command).tap do |s|
-          log("command : #{s.inspect}", severity: :debug)
+          log("command: #{s.inspect}", severity: :debug)
         end
       end
     end

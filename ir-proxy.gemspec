@@ -5,8 +5,8 @@
 
 Gem::Specification.new do |s|
   s.name        = "ir-proxy"
-  s.version     = "1.0.1"
-  s.date        = "2019-09-28"
+  s.version     = "1.0.2"
+  s.date        = "2019-09-29"
   s.summary     = "Proxy for ir-keytable"
   s.description = "A simple proxy propagating event seen through ir-keytable"
 

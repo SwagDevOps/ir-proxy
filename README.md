@@ -13,22 +13,63 @@ as a result, [configuration][file:config] file is located:
 ${XDG_CONFIG_HOME:-~/home/.config}/ir-proxy/config.yml
 ```
 
-## Sample startup scripts
-
-Using a dedicated user:
+## Sample commands
 
 ```sh
-#!/usr/bin/env sh
-
-socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe
+sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe
 ```
 
-Using a global config (run as root):
+```sh
+sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe --config /etc/ir-proxy/config.yml
+```
+
+## Sample ``systemd`` service
+
+```ini
+# /lib/systemd/system/ir-proxy.service
+[Unit]
+Description=Remote support service
+
+[Service]
+ExecStart=/usr/local/bin/_ir-proxy user
+StandardInput=tty-force
+StandardOutput=tty
+
+[Install]
+WantedBy=multi-user.target
+```
 
 ```sh
 #!/usr/bin/env sh
+# /usr/local/bin/_ir-proxy
 
-socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | ir-proxy pipe --config /etc/ir-proxy/config.yml
+export DISPLAY=${2:-:0}
+set -eu
+X_USER=${1}
+LOGFILE=/var/log/ir-proxy.log
+
+touch "${LOGFILE}"
+chown "${X_USER}" "${LOGFILE}"
+(socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty,setsid,ctty | \
+    sudo -u "${X_USER}" ir-proxy pipe --config /etc/ir-proxy/config.yml) > "${LOGFILE}" 2>&1
+```
+
+```sh
+sudo systemctl enable ir-proxy.service
+```
+
+## Sample keymap
+
+```xml
+<!-- ~/.kodi/userdata/keymaps/mce-vista.xml -->
+<keymap>
+  <global>
+    <keyboard>
+     <power>XBMC.ShutDown()</power>
+     <f12>XBMC.ActivateWindow(Home)</f12>
+    </keyboard>
+  </global>
+</keymap>
 ```
 
 ## Extract available keys
