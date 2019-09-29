@@ -30,16 +30,16 @@ sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pip
 [Unit]
 Description=Remote support service
 PartOf=graphical-session.target
-ConditionPathExists=/dev/tty0
+ConditionPathExists=/dev/tty20
 
 [Service]
 Type=simple
 ExecStart=/usr/local/bin/_ir-proxy user
-StandardInput=tty-force
+StandardInput=tty-fail
 StandardOutput=tty
 User=root
 TTYVHangup=yes
-TTYPath=/dev/tty0
+TTYPath=/dev/tty20
 TTYReset=yes
 RemainAfterExit=false
 Restart=always
@@ -57,11 +57,13 @@ export DISPLAY=${2:-:0}
 set -eu
 X_USER=${1}
 LOGFILE=/var/log/ir-proxy.log
+CONFIG=/etc/ir-proxy/config.yml
+export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
 (socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty,setsid,ctty | \
-    sudo -u "${X_USER}" ir-proxy pipe --config /etc/ir-proxy/config.yml) > "${LOGFILE}" 2>&1
+    sudo -Eu "${X_USER}" ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
 ```sh
