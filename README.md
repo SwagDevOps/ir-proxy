@@ -29,14 +29,24 @@ sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pip
 # /lib/systemd/system/ir-proxy.service
 [Unit]
 Description=Remote support service
+PartOf=graphical-session.target
+ConditionPathExists=/dev/tty0
 
 [Service]
+Type=simple
 ExecStart=/usr/local/bin/_ir-proxy user
 StandardInput=tty-force
 StandardOutput=tty
+User=root
+TTYVHangup=yes
+TTYPath=/dev/tty0
+TTYReset=yes
+RemainAfterExit=false
+Restart=always
+RestartSec=1s
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 ```
 
 ```sh
