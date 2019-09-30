@@ -97,7 +97,7 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 * [XF86 keyboard symbols](http://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols)
 * [Keyboard controls - Official Kodi Wiki](https://kodi.wiki/view/Keyboard_controls)
 * [Remote controller tables — The Linux Kernel documentation](https://www.kernel.org/doc/html/v4.14/media/uapi/rc/rc-tables.html)
-
+* [xdotool | Linux man page](http://linuxcommandlibrary.com/man/xdotool.html)
 
 <!-- hyeprlinks -->
 
