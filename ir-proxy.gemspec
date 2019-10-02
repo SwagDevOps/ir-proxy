@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("kamaze-version", ["~> 1.0"])
   s.add_runtime_dependency("sys-proc", ["~> 1.1"])
   s.add_runtime_dependency("thor", ["~> 0.20"])
-  s.add_runtime_dependency("xdg", ["< 3.0", ">= 2.2"])
+  s.add_runtime_dependency("xdg", ">= 2.2", "< 4.0")
 end
 
 # Local Variables:

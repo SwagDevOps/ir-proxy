@@ -9,7 +9,7 @@ group :default do
   gem 'kamaze-version', '~> 1.0'
   gem 'sys-proc', '~> 1.1'
   gem 'thor', '~> 0.20'
-  gem 'xdg', '>= 2.2', '< 3.0'
+  gem 'xdg', '>= 2.2', '< 4.0'
 end
 
 group :development do
