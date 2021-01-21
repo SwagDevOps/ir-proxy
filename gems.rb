@@ -8,7 +8,7 @@ group :default do
   gem 'concurrent-ruby', '~> 1.1'
   gem 'kamaze-version', '~> 1.0'
   gem 'sys-proc', '~> 1.1'
-  gem 'thor', '~> 0.20'
+  gem 'thor', '~> 1.1'
   gem 'xdg', '>= 2.2', '< 3.0'
 end
 
