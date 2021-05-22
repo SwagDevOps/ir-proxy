@@ -8,15 +8,17 @@
 
 require_relative '../ir_proxy'
 
-# Provide file locking (based on `flock`).
+# Parse lines from `lirc protocol`
+#
+# @see https://www.sbprojects.net/knowledge/ir/rc6.php
 class IrProxy::KeyScan
-  # 1565163195.634614: event type EV_KEY(0x01) key_down: KEY_NUMERIC_2(0x0202)
-  REGEXP = /(?<time>[0-9]+\.[0-9]+):\s+
-event\s+type\s+EV_KEY
-\((?<code_1>[0-9]+x[0-9 a-f A-F]+)\)\s+
-key_(?<type>down|up):\s+
-KEY_(?<name>[A-Z]+[A-Z_0-9]*)
-\((?<code_2>[0-9]+x[0-9 a-f A-F]+)\)/x.freeze
+  # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422 toggle=1
+  # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422
+  REGEXP = /^(?<time>[0-9]+\.[0-9]+):\s+
+lirc\s+protocol\((?<protocol>.*)\):\s+
+scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
+(?<toggle>toggle=1)?
+$/x.freeze
 
   # @param [String] line
   def initialize(line)
@@ -25,9 +27,7 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
 
   # @return [Hash{String => String}]
   def parsed
-    @parsed ||= lambda do
-      self.class.parse(line).to_h
-    end.call.freeze
+    @parsed ||= self.class.parse(line).to_h.transform_values(&:freeze).freeze
   end
 
   def to_s
@@ -38,24 +38,19 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
     to_h.empty?
   end
 
-  # @return [Symbol|nil] lowercase
-  def type
-    to_h[:type]
+  # @return [String, nil] lowercase
+  def protocol
+    to_h[:protocol]
+  end
+
+  # @return [String]
+  def scancode
+    to_h[:scancode]
   end
 
   # @return [Boolean]
-  def down?
-    type == :down
-  end
-
-  # @return [Boolean]
-  def up?
-    type == :up
-  end
-
-  # @return [Symbol] uppercase
-  def name
-    to_h[:name]
+  def toggle?
+    !!to_h[:toggle]
   end
 
   alias to_str to_s
@@ -72,21 +67,18 @@ KEY_(?<name>[A-Z]+[A-Z_0-9]*)
 
     # @param [String] line
     #
-    # @return [Hash{String => String}|nil]
+    # @return [Hash{Symbol => Object}, nil]
     def parse(line)
       REGEXP.match(line).tap do |m|
         return nil unless m
 
-        # @formatter:off
-        Hash[m.named_captures.sort]
-          .map { |k, v| [k.to_sym, v] }.to_h.tap do |scan|
-          scan[:time] = scan.fetch(:time).to_f
-          scan[:name] = scan.fetch(:name).upcase.to_sym
-          scan[:type] = scan.fetch(:type).downcase.to_sym
-
-          return scan
+        Hash[m.named_captures.sort].transform_keys(&:to_sym).tap do |scan|
+          return scan.merge({
+                              time: scan.fetch(:time).to_f,
+                              protocol: scan.fetch(:protocol).to_sym,
+                              toggle: !!(scan[:toggle])
+                            })
         end
-        # @formatter:on
       end
     end
   end
