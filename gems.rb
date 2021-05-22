@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-# bundle install --path vendor/bundle
+# ```sh
+# bundle config set --local clean 'true'
+# bundle config set --local path 'vendor/bundle'
+# bundle install --standalone
+# ```
 source 'https://rubygems.org'
 
 group :default do
@@ -13,20 +17,22 @@ group :default do
 end
 
 group :development do
-  gem 'kamaze-project', '~> 1.0', '>= 1.0.3'
-  gem 'listen', '~> 3.1'
-  gem 'rubocop', '~> 0.72'
-end
+  { github: 'SwagDevOps/kamaze-project', branch: 'develop' }.tap do |options|
+    gem(*['kamaze-project'].concat([options]))
+  end
 
-group :repl do
+  gem 'listen', '~> 3.1'
+  gem 'rake', '~> 13.0'
+  gem 'rubocop', '~> 1.3'
+  gem 'rugged', '~> 1.0'
+  # repl ---------------------------------
   gem 'interesting_methods', '~> 0.1'
   gem 'pry', '~> 0.12'
-  gem 'pry-coolline', '~> 0.2'
 end
 
 group :doc do
   gem 'github-markup', '~> 3.0'
-  gem 'redcarpet', '~> 3.4'
+  gem 'redcarpet', '~> 3.5'
   gem 'yard', '~> 0.9'
   gem 'yard-coderay', '~> 0.1'
 end
