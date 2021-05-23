@@ -20,9 +20,8 @@ class IrProxy::KeyTable
     AbortError: 'abort_error',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("key_table/#{fp}")) }
 
-  # @param [String, Symbol, nil] protocol
-  def initialize(protocol: nil)
-    self.tap { @protocol = protocol&.to_sym }.freeze
+  def initialize(**kwargs)
+    self.tap { @config = kwargs[:config] }.freeze
   end
 
   # Retrieve bame for given value with optional protocol (when already set).
@@ -59,21 +58,35 @@ class IrProxy::KeyTable
 
   attr_reader :protocol
 
-  def read_file(protocol)
-    path.join("#{protocol}.yml").yield_self do |file|
-      return {} unless file.file? and file.readable?
+  # @ertrun [IrProxy::Config]
+  def config
+    @config || IrProxy['config']
+  end
 
-      return YAML.safe_load(file.read)
+  # Read file for given protocol.
+  #
+  # File can be loctaed in user config directory (prior) or in lib directory.
+  # Paths are tested sequentially.
+  #
+  # @return [Hash, Hash{Integer => String}]
+  def read_file(protocol)
+    {}.tap do
+      paths.each do |path|
+        path.join("#{protocol}.yml").yield_self do |file|
+          return YAML.safe_load(file.read) if file.file? and file.readable?
+        end
+      end
     end
   end
 
-  # Get path to keympas directory.
+  # Get paths to keympas directories.
   #
   # @return Pathname
-  def path
-    [Pathname.new(__FILE__).basename('.*'), 'keymaps'].yield_self do |path|
-      Pathname.new(__dir__).join(*path)
-    end
+  def paths
+    [
+      config.path,
+      Pathname.new(__dir__).join(Pathname.new(__FILE__).basename('.*')),
+    ].map { |path| Pathname.new(path).join('keymaps') }
   end
 
   # @param [String, Symbol, nil] protocol
