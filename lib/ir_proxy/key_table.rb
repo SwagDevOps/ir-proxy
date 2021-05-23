@@ -34,14 +34,8 @@ class IrProxy::KeyTable
   #
   # @return String, nil
   def call(value, protocol: nil)
-    ((protocol ||= self.protocol)&.to_sym || lambda do
-      raise ArgumentError, 'protocol must be set'
-    end.call).yield_self do
-      raise AbortError if self.protocol and protocol != self.protocol
-
-      self[protocol][value].tap do |v|
-        return v.gsub(/^KEY_/, '').upcase.freeze unless v.nil?
-      end
+    self[ensure_protocol!(protocol)].yield_self do |keymap|
+      keymap[value]&.yield_self { |v| v.gsub(/^KEY_/, '').upcase.freeze }
     end
   end
 
@@ -56,7 +50,7 @@ class IrProxy::KeyTable
   #
   # @param [String] protocol
   #
-  # @return [Hash{String => String}]
+  # @return Hash{String => String}
   def [](protocol)
     read_file(protocol)
   end
@@ -75,10 +69,21 @@ class IrProxy::KeyTable
 
   # Get path to keympas directory.
   #
-  # @return [Pathname]
+  # @return Pathname
   def path
     [Pathname.new(__FILE__).basename('.*'), 'keymaps'].yield_self do |path|
       Pathname.new(__dir__).join(*path)
     end
+  end
+
+  # @param [String, Symbol, nil] protocol
+  #
+  # @return Symbol
+  def ensure_protocol!(protocol)
+    (self.protocol || protocol).tap do
+      raise ArgumentError, 'protocol must be set' if self.protocol.nil? and protocol.nil?
+
+      raise AbortError if self.protocol and !protocol.nil? and protocol.to_sym != self.protocol
+    end.to_sym
   end
 end
