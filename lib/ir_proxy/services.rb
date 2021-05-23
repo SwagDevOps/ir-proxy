@@ -7,7 +7,7 @@
 # There is NO WARRANTY, to the extent permitted by law.
 
 {
-  progname: Sys::Proc.progname,
+  progname: File.dirname(__FILE__).yield_self { |dir| File.basename(dir).gsub('_', '-') },
   process_manager: -> { IrProxy::ProcessManager.new },
   events_dispatcher: -> { IrProxy::Events::Dispatcher.new },
   key_scanner: -> { IrProxy::KeyScan },
