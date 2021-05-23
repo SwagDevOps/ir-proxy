@@ -12,76 +12,41 @@ $LOAD_PATH.unshift(__dir__)
 module IrProxy
   autoload(:Pathname, 'pathname')
 
-  class << self
-    protected
-
-    # Denote current class is used in a bundled context.
-    #
-    # @return [Boolean]
-    def bundled?
-      # @formatter:off
-      [['gems.rb', 'gems.locked'], ['Gemfile', 'Gemfile.lock']].map do |m|
-        Dir.chdir("#{__dir__}/..") do
-          m.map { |f| Pathname(f).file? }.uniq
-        end
-      end.include?([true])
-      # @formatter:on
-    end
-
-    # Denote current class is used in development context.
-    #
-    # @return [Boolean]
-    def development?
-      # @formatter:off
-      [['gemspec.tpl']].map do |m|
-        Dir.chdir("#{__dir__}/..") do
-          m.map { |f| Pathname(f).file? }
-        end
-      end.include?([true])
-      # @formatter:on
-    end
-  end
-
-  # @formatter:off
   {
     VERSION: 'version',
     Adapter: 'adapter',
+    Bundleable: 'bundleable',
     Cli: 'cli',
     Config: 'config',
     Container: 'container',
     Events: 'events',
     FileLock: 'file_lock',
     KeyScan: 'key_scan',
+    KeyTable: 'key_table',
     Logger: 'logger',
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
     Sampler: 'sampler'
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("ir_proxy/#{fp}")) }
-  # @formatter:on
 
-  if bundled?
-    require 'bundler/setup'
-  end
-
-  if development?
-    require 'pp'
-    require 'kamaze/project/core_ext/pp'
-  end
+  include(Bundleable)
 
   class << self
     # @return [Container]
     def container
+      # noinspection RubyYardReturnMatch
       @container ||= Container.instance.tap do |container|
-        if container.empty?
-          services.each { |k, v| container.set(k, v) }
-        end
+        services.each { |k, v| container.set(k, v) } if container.empty?
       end
     end
 
+    # Retrieve instance stored on container.
+    #
     # @param [String|Symbol] id
     #
     # @return [Object]
     def [](id)
+      # noinspection RubyYardReturnMatch
       container.get(id)
     end
 

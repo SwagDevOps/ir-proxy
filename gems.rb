@@ -11,6 +11,7 @@ group :default do
   gem 'chrono_logger', '~> 1.1'
   gem 'concurrent-ruby', '~> 1.1'
   gem 'kamaze-version', '~> 1.0'
+  gem 'stibium-bundled', '~> 0.0.1', '>= 0.0.4'
   gem 'sys-proc', '~> 1.1'
   gem 'thor', '~> 0.20'
   gem 'xdg', '>= 2.2', '< 3.0'
