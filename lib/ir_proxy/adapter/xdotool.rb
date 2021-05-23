@@ -10,18 +10,26 @@ require_relative '../adapter'
 
 # Provide config access
 class IrProxy::Adapter::Xdotool < IrProxy::Adapter::Adapter
+  autoload(:Shellwords, 'shellwords')
+  include(IrProxy::Adapter::HasLogger)
+
   self.executable = 'xdotool'
+
+  def initialize(**kwargs)
+    super.tap do
+      @logger = kwargs[:loggger]
+    end.freeze
+  end
 
   def command_for(key_name)
     super.tap do |input|
       return nil if input.nil?
 
-      # @formatter:off
-      return [executable]
-             .append('key')
-             .append(*adapter_config['options'].to_a.map(&:to_s))
-             .append(*input)
-      # @formatter:off
+      [executable].append('key').append(*adapter_config['options'].to_a.map(&:to_s)).append(*input).tap do |command|
+        (command ? Shellwords.join(command) : command).tap do |s|
+          log("command: #{s.inspect}", severity: :debug)
+        end
+      end
     end
   end
 end
