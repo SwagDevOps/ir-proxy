@@ -11,6 +11,7 @@
   process_manager: -> { IrProxy::ProcessManager.new },
   events_dispatcher: -> { IrProxy::Events::Dispatcher.new },
   key_scanner: -> { IrProxy::KeyScan },
+  clock: IrProxy::Clock,
   config: -> { IrProxy::Config.new(nil, optional: true) },
   lock: -> { IrProxy::FileLock.new },
   cli: -> { IrProxy::Cli.new },
