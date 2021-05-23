@@ -11,6 +11,7 @@ require_relative '../events'
 # Intercept and process key down events
 class IrProxy::Events::KeyScan < IrProxy::Events::Listener
   autoload(:Shellwords, 'shellwords')
+  include(IrProxy::Events::HasLogger)
 
   def initialize(**kwargs)
     super.tap do
@@ -30,8 +31,6 @@ class IrProxy::Events::KeyScan < IrProxy::Events::Listener
   end
 
   protected
-
-  include(IrProxy::Events::HasLogger)
 
   # @return IrProxy::ProcessManager
   attr_reader :process_manager
