@@ -10,14 +10,13 @@ require_relative '../ir_proxy'
 
 # Almost namespace for listeners
 module IrProxy::Events
-  # @formatter:off
   {
     Dispatcher: 'dispatcher',
+    HasLogger: 'has_logger',
     Listener: 'listener',
     LineIncoming: 'line_incoming',
     KeyDown: 'key_down',
   }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
-  # @formatter:on
 
   class << self
     def register
