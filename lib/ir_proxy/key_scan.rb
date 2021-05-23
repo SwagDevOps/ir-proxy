@@ -17,12 +17,12 @@ class IrProxy::KeyScan
   REGEXP = /^(?<time>[0-9]+\.[0-9]+):\s+
 lirc\s+protocol\((?<protocol>.*)\):\s+
 scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
-(?<toggle>toggle=1)?
-$/x.freeze
+/x.freeze
 
   # @param [String] line
-  def initialize(line)
+  def initialize(line, **kwargs)
     @line = line.to_str
+    @keytable = kwargs[:keytable] || IrProxy[:keytable]
   end
 
   # @return [Hash{String => String}]
@@ -48,14 +48,24 @@ $/x.freeze
     to_h[:scancode]
   end
 
-  # @return [Boolean]
-  def toggle?
-    !!to_h[:toggle]
+  # @return [Symbol] uppercase
+  def name
+    to_h[:name]
+  end
+
+  def to_h
+    return {} if self.parsed.empty?
+
+    {
+      name: keytable.call(parsed[:value], protocol: parsed[:protocol])
+    }.yield_self do |addition|
+      parsed.dup.to_h.merge(addition)
+    end.yield_self do |h|
+      Hash[h.sort].transform_values(&:freeze).freeze
+    end
   end
 
   alias to_str to_s
-
-  alias to_h parsed
 
   class << self
     # @param [String] line
@@ -72,12 +82,12 @@ $/x.freeze
       REGEXP.match(line).tap do |m|
         return nil unless m
 
-        Hash[m.named_captures.sort].transform_keys(&:to_sym).tap do |scan|
-          return scan.merge({
-                              time: scan.fetch(:time).to_f,
-                              protocol: scan.fetch(:protocol).to_sym,
-                              toggle: !!(scan[:toggle])
-                            })
+        return Hash[m.named_captures.sort].transform_keys(&:to_sym).yield_self do |scan|
+          {
+            time: scan.fetch(:time).to_f,
+            protocol: scan.fetch(:protocol).to_sym,
+            value: scan.fetch(:scancode).to_i(16), # hxadecimal value to integer as seen in YAML files
+          }.yield_self { |addition| scan.merge(addition) }
         end
       end
     end
@@ -87,4 +97,7 @@ $/x.freeze
 
   # @return [String]
   attr_reader :line
+
+  # @return [IrProxy::KeyTable]
+  attr_reader :keytable
 end
