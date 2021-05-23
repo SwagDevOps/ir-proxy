@@ -23,6 +23,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   def initialize(line, **kwargs)
     @line = line.to_str
     @keytable = kwargs[:keytable] || IrProxy[:keytable]
+    @clock = kwargs[:clock] || IrProxy[:clock]
   end
 
   # @return [Hash{String => String}]
@@ -54,11 +55,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   end
 
   def to_h
-    return {} if self.parsed.empty?
-
-    {
-      name: keytable.call(parsed[:value], protocol: parsed[:protocol])
-    }.yield_self do |addition|
+    prepare_h(parsed).yield_self do |addition|
       parsed.dup.to_h.merge(addition)
     end.yield_self do |h|
       Hash[h.sort].transform_values(&:freeze).freeze
@@ -100,4 +97,19 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # @return [IrProxy::KeyTable]
   attr_reader :keytable
+
+  # @return [Class<IrProxy::Clock>]
+  attr_reader :clock
+
+  # Get additions for parsed result.
+  #
+  # @return Hash{Symbol => Object}
+  def prepare_h(parsed)
+    return {} if self.parsed.empty?
+
+    {
+      clock: clock.call,
+      name: keytable.call(parsed[:value], protocol: parsed[:protocol])
+    }
+  end
 end
