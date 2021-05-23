@@ -17,6 +17,7 @@ module IrProxy
     Adapter: 'adapter',
     Bundleable: 'bundleable',
     Cli: 'cli',
+    Clock: 'clock',
     Config: 'config',
     Container: 'container',
     Events: 'events',
