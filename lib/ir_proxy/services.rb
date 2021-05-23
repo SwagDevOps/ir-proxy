@@ -6,23 +6,22 @@
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# @formatter:off
 {
-  'progname': Sys::Proc.progname,
-  'process_manager': -> { ProcessManager.new },
-  'events_dispatcher': -> { Events::Dispatcher.new },
-  'key_scanner': -> { KeyScan },
-  'config': -> { IrProxy::Config.new(nil, optional: true) },
-  'lock': -> { FileLock.new },
-  'cli': -> { Cli.new },
-  'sampler': -> { Sampler.new },
-  'logger': -> { Logger.new('/dev/stdout', progname: IrProxy[:progname]) },
+  progname: Sys::Proc.progname,
+  process_manager: -> { IrProxy::ProcessManager.new },
+  events_dispatcher: -> { IrProxy::Events::Dispatcher.new },
+  key_scanner: -> { IrProxy::KeyScan },
+  config: -> { IrProxy::Config.new(nil, optional: true) },
+  lock: -> { IrProxy::FileLock.new },
+  cli: -> { IrProxy::Cli.new },
+  sampler: -> { IrProxy::Sampler.new },
+  logger: -> { IrProxy::Logger.new('/dev/stdout', progname: IrProxy[:progname]) },
+  keytable: -> { IrProxy::KeyTable.new },
   # events listeners ------------------------------------------------
-  'events:line.incoming': -> { Events::LineIncoming.new },
-  'events:key.down': -> { Events::KeyDown.new },
+  'events:line.incoming': -> { IrProxy::Events::LineIncoming.new },
+  'events:key.down': -> { IrProxy::Events::KeyDown.new },
   # adapters --------------------------------------------------------
-  'adapter': -> { Adapter.instance },
-  'adapters:dummy': -> { Adapter::Dummy.new },
-  'adapters:xdotool': -> { Adapter::Xdotool.new },
+  adapter: -> { IrProxy::Adapter.instance },
+  'adapters:dummy': -> { IrProxy::Adapter::Dummy.new },
+  'adapters:xdotool': -> { IrProxy::Adapter::Xdotool.new },
 }
-# @formatter:on
