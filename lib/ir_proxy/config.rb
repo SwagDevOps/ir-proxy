@@ -29,7 +29,12 @@ class IrProxy::Config
 
   # @return [IrProxy::Config::File]
   def file
-    File.new(@file || default_file, **@options)
+    IrProxy::Config::File.new(@file || default_file, **@options)
+  end
+
+  # @return [Pathname]
+  def path
+    Pathname.new(self.file).dirname
   end
 
   # @return [String]
