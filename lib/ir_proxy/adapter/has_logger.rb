@@ -10,6 +10,8 @@ require_relative '../adapter'
 
 # Provide logger.
 module IrProxy::Adapter::HasLogger
+  protected
+
   # @return IrProxy::Logger
   def logger
     @logger || IrProxy[:logger]
