@@ -16,11 +16,11 @@ ${XDG_CONFIG_HOME:-~/home/.config}/ir-proxy/config.yml
 ## Sample commands
 
 ```sh
-sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe
+sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe
 ```
 
 ```sh
-sudo socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty | sudo -u user ir-proxy pipe --config /etc/ir-proxy/config.yml
+sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe --config /etc/ir-proxy/config.yml
 ```
 
 ## Sample ``systemd`` service
@@ -62,7 +62,7 @@ export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
-(socat - EXEC:'ir-keytable -D 550 -P 150 -t',pty,setsid,ctty | \
+(socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | \
     sudo -Eu "${X_USER}" ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
