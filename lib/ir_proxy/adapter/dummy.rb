@@ -15,4 +15,8 @@ class IrProxy::Adapter::Dummy < IrProxy::Adapter::Adapter
   def command_for(_)
     nil
   end
+
+  def call(keyscan)
+    pp(keyscan)
+  end
 end
