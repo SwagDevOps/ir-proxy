@@ -13,8 +13,13 @@ class IrProxy::KeyTable
   autoload(:Pathname, 'pathname')
   autoload(:YAML, 'yaml')
 
+  {
+    AbortError: 'abort_error',
+  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("key_table/#{fp}")) }
+
+  # @param [String, Symbol, nil] protocol
   def initialize(protocol: nil)
-    self.tap { @protocol = protocol.to_sym if protocol }.freeze
+    self.tap { @protocol = protocol&.to_sym }.freeze
   end
 
   # Retrieve bame for given value with optional protocol (when already set).
@@ -22,12 +27,18 @@ class IrProxy::KeyTable
   # When protocol is set, optional protocol is ignored.
   #
   # @param [Integer] value
-  # @param [String, Symbol] protocol
+  # @param [String, Symbol, nil] protocol
   #
   # @return String, nil
   def call(value, protocol: nil)
-    self[self.protocol || protocol][value].tap do |v|
-      return v.gsub(/^KEY_/, '').upcase.freeze unless v.nil?
+    ((protocol ||= self.protocol)&.to_sym || lambda do
+      raise ArgumentError, 'protocol must be set'
+    end.call).yield_self do
+      raise AbortError if self.protocol and protocol != self.protocol
+
+      self[protocol][value].tap do |v|
+        return v.gsub(/^KEY_/, '').upcase.freeze unless v.nil?
+      end
     end
   end
 
@@ -37,8 +48,6 @@ class IrProxy::KeyTable
   #
   # @return [Hash{String => String}]
   def [](protocol)
-    return nil if protocol.nil?
-
     read_file(protocol)
   end
 
