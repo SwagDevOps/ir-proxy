@@ -17,6 +17,6 @@ class IrProxy::Adapter::Dummy < IrProxy::Adapter::Adapter
   end
 
   def call(keyscan)
-    pp(keyscan)
+    pp(keyscan.to_h)
   end
 end
