@@ -7,6 +7,7 @@
 # There is NO WARRANTY, to the extent permitted by law.
 
 require_relative '../ir_proxy'
+require 'sys/proc'
 
 # Describe main CLI.
 #
@@ -20,6 +21,7 @@ class IrProxy::Cli
 
   def initialize(**kwargs)
     @events_dispatcher = kwargs[:events_dispatcher]
+    @progname = (kwargs[:progname] || IrProxy['progname']).freeze
   end
 
   # Execute CLI.
@@ -28,12 +30,16 @@ class IrProxy::Cli
   #
   # @return [void]
   def call(given_args = ARGV)
+    Sys::Proc.progname = progname
     events_dispatcher&.boot
 
     Command.start(given_args.clone)
   end
 
   protected
+
+  # @return [String]
+  attr_reader :progname
 
   def events_dispatcher
     @events_dispatcher || IrProxy[:events_dispatcher]
