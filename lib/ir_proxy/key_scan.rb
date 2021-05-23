@@ -55,9 +55,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   end
 
   def to_h
-    prepare_h(parsed).yield_self do |addition|
-      parsed.dup.to_h.merge(addition)
-    end.yield_self do |h|
+    parsed.dup.to_h.merge(parsed_additions).yield_self do |h|
       Hash[h.sort].transform_values(&:freeze).freeze
     end
   end
@@ -104,7 +102,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   # Get additions for parsed result.
   #
   # @return Hash{Symbol => Object}
-  def prepare_h(parsed)
+  def parsed_additions
     return {} if self.parsed.empty?
 
     {
