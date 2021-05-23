@@ -9,10 +9,13 @@
 require_relative '../ir_proxy'
 
 # Simple wrapper built on top of monotonic clock.
+#
+# @see https://blog.dnsimple.com/2018/03/elapsed-time-with-ruby-the-right-way/
+# @see https://webdevdesigner.com/q/what-is-the-difference-between-clock-monotonic-clock-monotonic-raw-120918/
 class IrProxy::Clock
   # @param [Float] time
   def initialize(time: nil)
-    self.tap { @time = (time || self.class.now).freeze }.freeze
+    self.tap { @time = (time || self.class.now.to_f).freeze }.freeze
   end
 
   # @return Float
@@ -21,22 +24,28 @@ class IrProxy::Clock
   end
 
   class << self
-    # @return Float
+    alias call new
+
     def now
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      self.new(time: self.time)
     end
 
-    alias call new
+    protected
+
+    # @return [Float]
+    def time
+      Process.clock_gettime(Process::CLOCK_MONOTONIC_RAW).to_f
+    end
   end
 
-  # @return Float
+  # @return [Float]
   def elapsed
     self.class.new.to_f - self.to_f
   end
 
   # @param [Float] delay
   #
-  # @return Boolean
+  # @return [Boolean]
   def elapsed?(delay)
     elapsed > delay
   end
@@ -45,6 +54,6 @@ class IrProxy::Clock
 
   protected
 
-  # @return Float
+  # @return [Float]
   attr_reader :time
 end
