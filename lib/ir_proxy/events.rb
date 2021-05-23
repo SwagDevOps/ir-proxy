@@ -15,7 +15,7 @@ module IrProxy::Events
     HasLogger: 'has_logger',
     Listener: 'listener',
     LineIncoming: 'line_incoming',
-    KeyDown: 'key_down',
+    KeyScan: 'key_scan',
   }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
 
   class << self

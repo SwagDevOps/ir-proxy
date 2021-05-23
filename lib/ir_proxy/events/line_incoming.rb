@@ -18,11 +18,12 @@ class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
   # @param [String] line
   #
   # @see IrProxy::Events::KeyDown#call
+  # @see IrProxy::KeyScan.call
+  #
+  # @return Hash keyscan
   def call(line)
     scan(line).tap do |event|
-      unless event.empty?
-        events_dispatcher.dispatch(:"key.#{event.type}", event)
-      end
+      events_dispatcher.dispatch(:key_scan, event) unless event.empty?
     end
   end
 

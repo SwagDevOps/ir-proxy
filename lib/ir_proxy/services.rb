@@ -19,7 +19,7 @@
   keytable: -> { IrProxy::KeyTable.new },
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { IrProxy::Events::LineIncoming.new },
-  'events:key.down': -> { IrProxy::Events::KeyDown.new },
+  'events:key_scan': -> { IrProxy::Events::KeyScan.new },
   # adapters --------------------------------------------------------
   adapter: -> { IrProxy::Adapter.instance },
   'adapters:dummy': -> { IrProxy::Adapter::Dummy.new },
