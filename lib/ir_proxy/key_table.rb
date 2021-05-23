@@ -9,6 +9,9 @@
 require_relative '../ir_proxy'
 
 # Keymaps files reader
+#
+# An optional protocol can be set on `initialize`.
+# It will restrict `#call` to given protocol, raising `AbortError` if optional protocol differs.
 class IrProxy::KeyTable
   autoload(:Pathname, 'pathname')
   autoload(:YAML, 'yaml')
@@ -42,6 +45,13 @@ class IrProxy::KeyTable
     end
   end
 
+  # Denote given protocol has a keymaps file.
+  #
+  # @return [Boolean]
+  def has?(protocol)
+    !self[protocol].nil?
+  end
+
   # Retrieve keymap for given protocol.
   #
   # @param [String] protocol
@@ -63,6 +73,9 @@ class IrProxy::KeyTable
     end
   end
 
+  # Get path to keympas directory.
+  #
+  # @return [Pathname]
   def path
     [Pathname.new(__FILE__).basename('.*'), 'keymaps'].yield_self do |path|
       Pathname.new(__dir__).join(*path)
