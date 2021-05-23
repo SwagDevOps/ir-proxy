@@ -10,6 +10,8 @@ require_relative '../events'
 
 # Provide logger.
 module IrProxy::Events::HasLogger
+  protected
+
   # @return IrProxy::Logger
   def logger
     @logger || IrProxy[:logger]
