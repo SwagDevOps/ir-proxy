@@ -15,9 +15,10 @@ class IrProxy::Events::KeyScan < IrProxy::Events::Listener
 
   def initialize(**kwargs)
     super.tap do
-      @adapter = kwargs[:adapter]
       @logger = kwargs[:logger]
-      @config = kwargs[:config]
+      @adapter = kwargs[:adapter] || IrProxy[:adapter]
+      @config = kwargs[:config] || IrProxy[:config]
+      @throttler = kwargs[:throttler] || IrProxy[:throttler]
     end.freeze
   end
 
@@ -32,17 +33,19 @@ class IrProxy::Events::KeyScan < IrProxy::Events::Listener
 
   protected
 
-  # @return IrProxy::ProcessManager
-  attr_reader :process_manager
+  # @return [IrProxy::Thottler]
+  attr_reader :throttler
 
-  # @return IrProxy::Adapter::Adapter
-  def adapter
-    # noinspection RubyYardReturnMatch
-    @adapter || IrProxy[:adapter]
-  end
+  # @return [IrProxy::Config]
+  attr_reader :config
 
-  # @return IrProxy::Logger, nil]
+  # @return [IrProxy::Adapter::Adapter]
+  attr_reader :adapter
+
+  # @return [IrProxy::Logger, nil]
   def logger
-    (@config || IrProxy[:config])[:logger] ? super : nil
+    (@config || IrProxy[:config])[:logger].tap do |b|
+      return b ? super : nil
+    end
   end
 end
