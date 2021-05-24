@@ -98,6 +98,7 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 * [Keyboard controls - Official Kodi Wiki](https://kodi.wiki/view/Keyboard_controls)
 * [Remote controller tables — The Linux Kernel documentation](https://www.kernel.org/doc/html/v4.14/media/uapi/rc/rc-tables.html)
 * [xdotool | Linux man page](http://linuxcommandlibrary.com/man/xdotool.html)
+* [xbmc-system/keymaps/keyboard.xml][xbmc/system/keymaps/keyboard]
 
 <!-- hyeprlinks -->
 
@@ -105,3 +106,4 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 [wikipedia:pipeline]: https://en.wikipedia.org/wiki/Pipeline_(Unix)
 [wikipedia:xorg]: https://en.wikipedia.org/wiki/X.Org_Server
 [freedesktop:basedir-spec]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+[xbmc/system/keymaps/keyboard]: https://fossies.org/linux/xbmc/system/keymaps/keyboard.xml
