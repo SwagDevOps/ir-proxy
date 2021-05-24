@@ -26,9 +26,7 @@ class IrProxy::Pipe
 
   def call
     Thread.new do
-      stream.listen do |line|
-        events_dispatcher.dispatch(:'line.incoming', line)
-      end
+      stream.listen { |line| events_dispatcher.dispatch(:'line.incoming', line) }
     end.join
   end
 
@@ -37,6 +35,6 @@ class IrProxy::Pipe
   # @return [Stream]
   attr_reader :stream
 
-  # @return [IrProxy::EventDispatcher]
+  # @return [IrProxy::Events::Dispatcher]
   attr_reader :events_dispatcher
 end
