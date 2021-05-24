@@ -25,7 +25,8 @@ module IrProxy
     Logger: 'logger',
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
-    Sampler: 'sampler'
+    Sampler: 'sampler',
+    Throttler: 'throttler',
   }.each { |s, fp| autoload(s, "#{__dir__}/ir_proxy/#{fp}") }
 
   include(Bundleable)
