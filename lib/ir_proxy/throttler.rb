@@ -19,7 +19,9 @@ require_relative '../ir_proxy'
 #     @clock = IrProxy::Clock.new
 #   end
 #
-#   attr_reader :clock
+#   def elapsed?(delay)
+#     @clock.elapsed?(delay)
+#   end
 #
 #   def to_i
 #     @value.to_i
@@ -72,7 +74,7 @@ class IrProxy::Throttler
 
       return true unless history.key?(throttable.class)
 
-      if history.key?(throttable.class) and history.fetch(throttable.class).clock.elapsed?(delay)
+      if history.key?(throttable.class) and history.fetch(throttable.class).elapsed?(delay)
         return true if throttables.fetch(throttable.class).nil? # Does not compare
 
         return true if throttables.fetch(throttable.class).call(throttable, history.fetch(throttable.class))
