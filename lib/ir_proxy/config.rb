@@ -20,7 +20,7 @@ class IrProxy::Config
     # @retun [Hash{Symbol => Object}]
     def defaults
       {
-        repeat_delay: 0.1,
+        repeat_delay: 0.5,
         logger: true,
         protocol: nil,
       }
