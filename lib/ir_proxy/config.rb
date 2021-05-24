@@ -14,7 +14,7 @@ class IrProxy::Config
   autoload(:XDG, 'xdg')
   autoload(:File, "#{__dir__}/config/file")
 
-  # @param [String] file
+  # @param [String. nil] file
   def initialize(file = nil, **options)
     @progname = options[:progname]
     @file = file
