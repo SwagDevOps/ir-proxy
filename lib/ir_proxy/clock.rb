@@ -40,14 +40,14 @@ class IrProxy::Clock
 
   # @return [Float]
   def elapsed
-    self.class.new.to_f - self.to_f
+    (self.class.new.to_f - self.to_f) * 1.0
   end
 
   # @param [Float] delay
   #
   # @return [Boolean]
   def elapsed?(delay)
-    elapsed > delay
+    elapsed > (delay * 1.0)
   end
 
   alias inspect to_f
