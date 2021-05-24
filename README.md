@@ -77,8 +77,8 @@ sudo systemctl enable ir-proxy.service
 <keymap>
   <global>
     <keyboard>
-     <power>XBMC.ShutDown()</power>
-     <f12>XBMC.ActivateWindow(Home)</f12>
+     <power>ShutDown()</power>
+     <f12>ActivateWindow(Home)</f12>
     </keyboard>
   </global>
 </keymap>
