@@ -19,16 +19,21 @@ lirc\s+protocol\((?<protocol>.*)\):\s+
 scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 /x.freeze
 
-  # @param [String] line
-  def initialize(line, **kwargs)
-    @line = line.to_str
-    @keytable = kwargs[:keytable] || IrProxy[:keytable]
-    @clock = kwargs[:clock] || IrProxy[:clock]
-  end
+  # @return [IrProxy::Clock]
+  attr_reader :time
 
   # @return [Hash{String => String}]
-  def parsed
-    @parsed ||= self.class.parse(line).to_h.transform_values(&:freeze).freeze
+  attr_reader :parsed
+
+  # @param [String] line
+  def initialize(line, **kwargs)
+    self.tap do
+      @line = line.to_str
+      @parsed = self.class.parse(line).to_h.transform_values(&:freeze).freeze
+      @keytable = kwargs[:keytable] || IrProxy[:keytable]
+      @clock = kwargs[:clock] || IrProxy[:clock]
+      @time = clock.now.freeze
+    end.freeze
   end
 
   def to_s
@@ -58,6 +63,10 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
     parsed.dup.to_h.merge(parsed_additions).yield_self do |h|
       Hash[h.sort].transform_values(&:freeze).freeze
     end
+  end
+
+  def elapsed?(delay)
+    time.elapsed?(delay)
   end
 
   alias to_str to_s
@@ -106,7 +115,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
     return {} if self.parsed.empty?
 
     {
-      clock: clock.call,
+      clock: time,
       name: keytable.call(parsed[:value], protocol: parsed[:protocol])
     }
   end
