@@ -14,7 +14,7 @@ require 'pathname'
 class IrProxy::Config::File < Pathname
   autoload(:YAML, 'yaml')
 
-  # @param [String] path
+  # @param [String, Pathname] path
   def initialize(path, **options)
     super(path)
     self.optional = !!(options[:optional])
@@ -28,9 +28,7 @@ class IrProxy::Config::File < Pathname
   #
   # @return [Hash{Symbol => Object}]
   def parse
-    YAML.safe_load(self.read).tap do |h|
-      return h.map { |k, v| [k.to_sym, v] }.to_h.freeze
-    end
+    YAML.safe_load(self.read).yield_self { |h| h.transform_keys(&:to_sym).to_h.freeze }
   rescue Errno::ENOENT => e
     return {} if optional?
 
