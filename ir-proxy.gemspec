@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/cli.rb",
     "lib/ir_proxy/cli/command.rb",
     "lib/ir_proxy/cli/command/behavior.rb",
+    "lib/ir_proxy/clock.rb",
     "lib/ir_proxy/config.rb",
     "lib/ir_proxy/config/file.rb",
     "lib/ir_proxy/container.rb",
