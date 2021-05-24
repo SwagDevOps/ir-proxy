@@ -16,6 +16,7 @@ self.singleton_class.__send__(:define_method, :quote) do |input|
   input.to_s.inspect
 end
 ?>
+
 Gem::Specification.new do |s|
   s.name        = #{quote(@name)}
   s.version     = #{quote(@version)}
@@ -28,10 +29,7 @@ Gem::Specification.new do |s|
   s.email       = #{quote(@email)}
   s.homepage    = #{quote(@homepage)}
 
-  # MUST follow the higher required_ruby_version
-  # requires version >= 2.3.0 due to safe navigation operator &
-  # requires version >= 2.5.0 due to Lint/Syntax: unexpected token kRESCUE
-  s.required_ruby_version = ">= 2.5.0"
+  s.required_ruby_version = #{quote(@required_ruby_version)}
   s.require_paths = ["lib"]
   s.bindir        = "bin"
   s.executables   = [

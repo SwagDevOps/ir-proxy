@@ -2,6 +2,7 @@
 
 # vim: ai ts=2 sts=2 et sw=2 ft=ruby
 # rubocop:disable all
+
 Gem::Specification.new do |s|
   s.name        = "ir-proxy"
   s.version     = "1.0.2"
@@ -14,9 +15,6 @@ Gem::Specification.new do |s|
   s.email       = "dimitri@arrigoni.me"
   s.homepage    = "https://github.com/SwagDevOps/ir-proxy"
 
-  # MUST follow the higher required_ruby_version
-  # requires version >= 2.3.0 due to safe navigation operator &
-  # requires version >= 2.5.0 due to Lint/Syntax: unexpected token kRESCUE
   s.required_ruby_version = ">= 2.5.0"
   s.require_paths = ["lib"]
   s.bindir        = "bin"
