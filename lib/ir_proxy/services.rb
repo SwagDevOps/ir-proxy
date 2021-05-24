@@ -18,6 +18,17 @@
   sampler: -> { IrProxy::Sampler.new },
   logger: -> { IrProxy::Logger.new('/dev/stdout', progname: IrProxy[:progname]) },
   keytable: -> { IrProxy::KeyTable.new },
+  throttler: lambda do
+    {
+      IrProxy::KeyScan => lambda do |current, previous|
+        # @type [IrProxy::KeyScan] current
+        # @type [IrProxy::KeyScan] previous
+        [current.to_h[:protocol], current.to_h[:scancode]] != [previous.to_h[:protocol], previous.to_h[:scancode]]
+      end
+    }.yield_self do |rules|
+      IrProxy::Throttler.new(rules)
+    end
+  end,
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { IrProxy::Events::LineIncoming.new },
   'events:key_scan': -> { IrProxy::Events::KeyScan.new },
