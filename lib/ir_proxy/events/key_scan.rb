@@ -24,16 +24,20 @@ class IrProxy::Events::KeyScan < IrProxy::Events::Listener
 
   # @param [IrProx::KeyScan] keyscan
   def call(keyscan)
-    [keyscan.name.to_s, adapter.trans(keyscan.name)].tap do |k, v|
-      self.log("key down #{k.inspect} -> #{v.inspect}", severity: :info)
+    make_loggable(keyscan).tap do |loggable|
+      throttler.call(keyscan, delay: config[:repeat_delay]) do
+        log('keyscan %<value>s' % loggable, severity: :debug)
+
+        adapter.call(keyscan)
+      end.tap do |v|
+        log('discard %<value>s' % loggable, severity: :debug) if v.nil?
+      end
     end
-    # process event ---------------------------------------------------
-    adapter.call(keyscan)
   end
 
   protected
 
-  # @return [IrProxy::Thottler]
+  # @return [IrProxy::Throttler]
   attr_reader :throttler
 
   # @return [IrProxy::Config]
@@ -46,6 +50,19 @@ class IrProxy::Events::KeyScan < IrProxy::Events::Listener
   def logger
     (@config || IrProxy[:config])[:logger].tap do |b|
       return b ? super : nil
+    end
+  end
+
+  def make_loggable(keyscan)
+    keyscan.to_h.yield_self do |h|
+      {
+        trans: adapter.trans(keyscan.name),
+        value: {
+          protocol: h[:protocol],
+          scancode: h[:scancode],
+          name: h[:name],
+        },
+      }
     end
   end
 end
