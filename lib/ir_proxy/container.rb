@@ -11,15 +11,39 @@ require_relative '../ir_proxy'
 # Container for services (service locator).
 class IrProxy::Container
   autoload(:Concurrent, 'concurrent')
+  autoload(:Pathname, 'pathname')
   autoload(:Singleton, 'singleton')
+
   include Singleton
+
   class << self
     # @!attribute instance
-    #   @return [IrProxy::ProcessManager]
+    #   @return [IrProxy::Container]
+
+    protected
+
+    # @return [Hash{Symbol => Object}]
+    def services
+      require 'sys/proc'
+      require 'English'
+
+      Pathname.new(__dir__).join('services.rb').tap do |file|
+        return instance_eval(file.read, file.to_s, 1)
+      end
+    end
   end
 
   def inspect
     self.keys.inspect
+  end
+
+  def reset!
+    self.tap do |container|
+      @dependencies = Concurrent::Hash.new
+      @constructors = Concurrent::Hash.new
+
+      self.class.__send__(:services).each { |k, v| container.set(k, v) }
+    end
   end
 
   # @param [String|Symbol] id
@@ -38,10 +62,8 @@ class IrProxy::Container
   # @return [self]
   def set(id, instance)
     self.tap do
-      # @formatter:off
-      (instance.is_a?(Proc) ? constructors : dependencies)
-        .merge!(id.to_sym => instance)
-      # @formatter:on
+      (instance.is_a?(Proc) ? constructors : dependencies).merge!(id.to_sym => instance)
+
       constructors.delete(id.to_sym) if dependencies.key?(id.to_sym)
     end
   end
@@ -90,8 +112,7 @@ class IrProxy::Container
   attr_accessor :constructors
 
   def initialize
-    @dependencies = Concurrent::Hash.new
-    @constructors = Concurrent::Hash.new
+    self.reset!
   end
 
   # @param [String|Symbol] id

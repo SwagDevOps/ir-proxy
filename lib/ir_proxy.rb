@@ -10,8 +10,6 @@ $LOAD_PATH.unshift(__dir__)
 
 # Base module (namespace)
 module IrProxy
-  autoload(:Pathname, 'pathname')
-
   {
     VERSION: 'version',
     Adapter: 'adapter',
@@ -28,17 +26,14 @@ module IrProxy
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
     Sampler: 'sampler'
-  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("ir_proxy/#{fp}")) }
+  }.each { |s, fp| autoload(s, "#{__dir__}/ir_proxy/#{fp}") }
 
   include(Bundleable)
 
   class << self
     # @return [Container]
     def container
-      # noinspection RubyYardReturnMatch
-      @container ||= Container.instance.tap do |container|
-        services.each { |k, v| container.set(k, v) } if container.empty?
-      end
+      Container.instance
     end
 
     # Retrieve instance stored on container.
@@ -49,17 +44,6 @@ module IrProxy
     def [](id)
       # noinspection RubyYardReturnMatch
       container.get(id)
-    end
-
-    protected
-
-    def services
-      require 'sys/proc'
-      require 'English'
-
-      Pathname.new(__FILE__.gsub(/\.rb$/, '')).join('services.rb').tap do |file|
-        return instance_eval(file.read, file.to_s, 1)
-      end
     end
   end
 end

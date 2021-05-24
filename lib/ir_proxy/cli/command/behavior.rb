@@ -12,6 +12,12 @@ require_relative '../command'
 module IrProxy::Cli::Command::Behavior
   protected
 
+  # @return [IrProxy::EVents::Dispatcher]
+  def events_dispatcher
+    # noinspection RubyYardReturnMatch
+    IrProxy[:events_dispatcher]
+  end
+
   # Block surrounding `pipe` command.
   #
   # @param [Hash] options
@@ -26,19 +32,15 @@ module IrProxy::Cli::Command::Behavior
     on_start(:sample, options, [], &block)
   end
 
-  # @param [String] command_name
+  # @param [String, Symbol] command_name
   # @param [Hash] options
-  # @param [Array<String|Symbol>] appliables
+  # @param [Array<String, Symbol>] appliables
   def on_start(command_name, options, appliables = [], &block)
     appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
 
-    [:config].each { |k| IrProxy[k].freeze }
+    events_dispatcher.boot unless events_dispatcher.booted?
 
-    if command_name.to_sym == :pipe
-      process { block.call }
-    else
-      block.call
-    end
+    command_name.to_sym == :pipe ? process { block.call } : block.call
   end
 
   # Apply `config` option.
@@ -48,7 +50,7 @@ module IrProxy::Cli::Command::Behavior
     self.tap do
       if options[:config]
         IrProxy::Config.new(options[:config]).tap do |config|
-          IrProxy.container.set(:config, config)
+          IrProxy.container.reset!.set(:config, config.freeze)
         end
       end
     end
