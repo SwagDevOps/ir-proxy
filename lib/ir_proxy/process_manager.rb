@@ -40,6 +40,11 @@ class IrProxy::ProcessManager
     yield(handle(&block)) if block
   end
 
+  # Can not be fozen due to statuses terminated and terminating
+  def freeze
+    self
+  end
+
   # Get the process group ID.
   #
   # @return [Integer]
@@ -57,7 +62,7 @@ class IrProxy::ProcessManager
 
   # Execute given `args` as command line (``system``).
   #
-  # @return [Integer|nil]
+  # @return [Integer, nil]
   def sh(*args)
     fork { shell.call(*args) }.tap do |pid|
       if pid
@@ -127,6 +132,7 @@ class IrProxy::ProcessManager
 
   # @return [IrProxy::Logger|Logger]
   def logger
+    # noinspection RubyYardReturnMatch
     @logger || IrProxy[:logger]
   end
 
