@@ -11,15 +11,8 @@ require_relative '../adapter'
 # Provide config access
 class IrProxy::Adapter::Xdotool < IrProxy::Adapter::Adapter
   autoload(:Shellwords, 'shellwords')
-  include(IrProxy::Adapter::HasLogger)
 
   self.executable = 'xdotool'
-
-  def initialize(**kwargs)
-    super.tap do
-      @logger = kwargs[:loggger]
-    end.freeze
-  end
 
   def command_for(key_name)
     super.tap do |input|

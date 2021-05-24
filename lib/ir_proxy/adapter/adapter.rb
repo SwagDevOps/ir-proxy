@@ -12,6 +12,8 @@ require_relative '../adapter'
 #
 # @abstract
 class IrProxy::Adapter::Adapter
+  include(IrProxy::Adapter::HasLogger)
+
   # @return [String]
   attr_reader :executable
 
@@ -20,11 +22,10 @@ class IrProxy::Adapter::Adapter
 
   def initialize(**kwargs)
     @executable = kwargs[:executbale] || self.class.executable
-    @config = kwargs[:config]
+    @config = kwargs[:config] || IrProxy[:config]
+    @logger = kwargs[:logger] || IrProxy[:logger]
     @name = self.class.identifier
-    (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
-      @process_manager = pm
-    end
+    @process_manager = kwargs[:process_manager] || IrProxy[:process_manager]
   end
 
   def dummy?
@@ -72,7 +73,7 @@ class IrProxy::Adapter::Adapter
     #
     # @return [String]
     def identifier
-      Dry::Inflector.new.tap do |inf|
+      Dry::Inflector.new.yield_self do |inf|
         self.name.split('::')[-1].tap do |name|
           return inf.underscore(name).to_sym
         end
@@ -84,9 +85,9 @@ class IrProxy::Adapter::Adapter
   #
   # @todo actual implementation
   #
-  # @return [Array<String>]
+  # @return [Array<String>, nil]
   def command_for(key_name)
-    trans(key_name).tap do |input|
+    trans(key_name).yield_self do |input|
       return nil if input.nil?
 
       return [input.to_s]
@@ -99,11 +100,16 @@ class IrProxy::Adapter::Adapter
   attr_reader :process_manager
 
   # @return [IrPoxy::Config]
-  def config
-    @config ||= IrProxy[:config]
-  end
+  attr_reader :config
 
   class << self
     attr_accessor :executable
+  end
+
+  # @return [IrProxy::Logger, nil]
+  def logger
+    (@config || IrProxy[:config])[:logger].tap do |b|
+      return b ? super : nil
+    end
   end
 end

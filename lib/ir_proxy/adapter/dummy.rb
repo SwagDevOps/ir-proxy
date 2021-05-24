@@ -17,6 +17,16 @@ class IrProxy::Adapter::Dummy < IrProxy::Adapter::Adapter
   end
 
   def call(keyscan)
-    pp(keyscan.to_h)
+    dump(keyscan)
+  end
+
+  protected
+
+  def dump(*dumpables)
+    dumpables.tap { pp(*dumpables) if dump? }
+  end
+
+  def dump?
+    !!config[:adapter]&.fetch('dump', false)
   end
 end
