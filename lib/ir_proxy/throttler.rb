@@ -74,11 +74,9 @@ class IrProxy::Throttler
 
       return true unless history.key?(throttable.class)
 
-      if history.key?(throttable.class) and history.fetch(throttable.class).elapsed?(delay)
-        return true if throttables.fetch(throttable.class).nil? # Does not compare
+      return true if throttables.fetch(throttable.class)&.call(throttable, history.fetch(throttable.class))
 
-        return true if throttables.fetch(throttable.class).call(throttable, history.fetch(throttable.class))
-      end
+      return true if history.key?(throttable.class) and history.fetch(throttable.class).elapsed?(delay)
     end
   end
 
