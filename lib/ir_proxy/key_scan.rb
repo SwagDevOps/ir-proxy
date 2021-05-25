@@ -17,6 +17,7 @@ class IrProxy::KeyScan
   REGEXP = /^(?<time>[0-9]+\.[0-9]+):\s+
 lirc\s+protocol\((?<protocol>.*)\):\s+
 scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
+(?<toggle>toggle=[0-9]+)?
 /x.freeze
 
   # @return [IrProxy::Clock]
@@ -87,13 +88,23 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
         return nil unless m
 
         return Hash[m.named_captures.sort].transform_keys(&:to_sym).yield_self do |scan|
-          {
-            time: scan.fetch(:time).to_f,
-            protocol: scan.fetch(:protocol).to_sym,
-            value: scan.fetch(:scancode).to_i(16), # hxadecimal value to integer as seen in YAML files
-          }.yield_self { |addition| scan.merge(addition) }
+          prepare(scan).yield_self { |prepared| scan.merge(prepared) }
         end
       end
+    end
+
+    protected
+
+    # @paran [Hash{Symbol => Object}] scan
+    #
+    # @return [Hash{Symbol => Object}]
+    def prepare(scan)
+      {
+        time: scan.fetch(:time).to_f,
+        protocol: scan.fetch(:protocol).to_sym,
+        value: scan.fetch(:scancode).to_i(16), # hexadecimal value to integer as seen in YAML files
+        toggle: !!scan.fetch(:toggle),
+      }
     end
   end
 
