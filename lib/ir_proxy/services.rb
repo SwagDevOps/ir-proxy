@@ -23,7 +23,11 @@
       IrProxy::KeyScan => lambda do |current, previous|
         # @type [IrProxy::KeyScan] current
         # @type [IrProxy::KeyScan] previous
-        [current.to_h[:protocol], current.to_h[:scancode]] != [previous.to_h[:protocol], previous.to_h[:scancode]]
+        ([[:protocol, :scancode, :toggle]] * 2).map.with_index do |keys, index|
+          keys.map { |key| [current, previous].fetch(index).to_h.fetch(key) }
+        end.yield_self do |values|
+          values.fetch(0) != values.fetch(1)
+        end
       end
     }.yield_self do |rules|
       IrProxy::Throttler.new(rules)
