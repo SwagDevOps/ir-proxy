@@ -32,8 +32,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
       @line = line.to_str
       @parsed = self.class.parse(line).to_h.transform_values(&:freeze).freeze
       @keytable = kwargs[:keytable] || IrProxy[:keytable]
-      @clock = kwargs[:clock] || IrProxy[:clock]
-      @time = clock.now.freeze
+      @time = (kwargs[:clock] || IrProxy[:clock]).call.freeze
     end.freeze
   end
 
@@ -115,9 +114,6 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # @return [IrProxy::KeyTable]
   attr_reader :keytable
-
-  # @return [Class<IrProxy::Clock>]
-  attr_reader :clock
 
   # Get additions for parsed result.
   #
