@@ -12,6 +12,8 @@ require_relative '../ir_proxy'
 #
 # An optional protocol can be set on `initialize`.
 # It will restrict `#call` to given protocol, raising `AbortError` if optional protocol differs.
+#
+# Keymaps files are retrieved from `config_path` directory and from lib directory.
 class IrProxy::KeyTable
   autoload(:Pathname, 'pathname')
   autoload(:YAML, 'yaml')
@@ -21,7 +23,11 @@ class IrProxy::KeyTable
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("key_table/#{fp}")) }
 
   def initialize(**kwargs)
-    self.tap { @config = kwargs[:config] }.freeze
+    self.tap do
+      (kwargs[:config] || IrProxy['config']).to_path.tap do |config_path|
+        @config_path = Pathname.new(config_path).freeze
+      end
+    end.freeze
   end
 
   # Retrieve bame for given value with optional protocol (when already set).
@@ -56,12 +62,11 @@ class IrProxy::KeyTable
 
   protected
 
+  # @return [String, Symbol] for enforced protocol
   attr_reader :protocol
 
-  # @ertrun [IrProxy::Config]
-  def config
-    @config || IrProxy['config']
-  end
+  # @ertrun [Pathname]
+  attr_reader :config_path
 
   # Read file for given protocol.
   #
@@ -84,7 +89,7 @@ class IrProxy::KeyTable
   # @return Pathname
   def paths
     [
-      config.path,
+      config_path,
       Pathname.new(__dir__).join(Pathname.new(__FILE__).basename('.*')),
     ].map { |path| Pathname.new(path).join('keymaps') }
   end
