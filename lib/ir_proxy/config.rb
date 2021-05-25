@@ -20,7 +20,7 @@ class IrProxy::Config
     # @retun [Hash{Symbol => Object}]
     def defaults
       {
-        repeat_delay: 0.5,
+        repeat_delay: 0.3,
         logger: true,
         protocol: nil,
       }
@@ -45,7 +45,12 @@ class IrProxy::Config
 
   # @return [Pathname]
   def path
-    Pathname.new(self.file).dirname
+    Pathname.new(self.file).dirname.expand_path
+  end
+
+  # @return [String]
+  def to_path
+    path.to_s
   end
 
   # @return [String]
