@@ -20,7 +20,7 @@ sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe
 ```
 
 ```sh
-sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe --config /etc/ir-proxy/config.yml
+sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe --config /etc/ir-proxy/config.yml
 ```
 
 ## Sample ``systemd`` service
