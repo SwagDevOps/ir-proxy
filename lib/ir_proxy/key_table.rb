@@ -55,7 +55,7 @@ class IrProxy::KeyTable
   #
   # @param [String] protocol
   #
-  # @return Hash{String => String}
+  # @return [Hash{String => String}]
   def [](protocol)
     read_file(protocol)
   end
