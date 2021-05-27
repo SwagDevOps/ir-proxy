@@ -15,12 +15,20 @@ require_relative '../ir_proxy'
 class IrProxy::Clock
   # @param [Float] time
   def initialize(time: nil)
-    self.tap { @time = (time || self.class.now.to_f).freeze }.freeze
+    self.tap { @time = decimal(time || self.class.now).freeze }.freeze
   end
 
   # @return Float
   def to_f
+    to_d.to_f
+  end
+
+  def to_d
     time.dup
+  end
+
+  def to_s
+    to_d.to_s
   end
 
   class << self
@@ -34,20 +42,20 @@ class IrProxy::Clock
 
     # @return [Float]
     def time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC_RAW).to_f
+      Process.clock_gettime(Process::CLOCK_MONOTONIC).to_f
     end
   end
 
   # @return [Float]
   def elapsed
-    (self.class.new.to_f - self.to_f) * 1.0
+    (self.class.new.to_d - self.to_d).to_f
   end
 
   # @param [Float] delay
   #
   # @return [Boolean]
   def elapsed?(delay)
-    elapsed > (delay * 1.0)
+    decimal(elapsed) > decimal(delay.to_f)
   end
 
   alias inspect to_f
@@ -56,4 +64,13 @@ class IrProxy::Clock
 
   # @return [Float]
   attr_reader :time
+
+  # @api private
+  #
+  # @param [Float] value
+  def decimal(value)
+    require 'bigdecimal'
+
+    BigDecimal(value.to_f.to_s)
+  end
 end
