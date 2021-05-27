@@ -17,7 +17,7 @@ class IrProxy::Config
   class << self
     # Defaults config values.
     #
-    # @retun [Hash{Symbol => Object}]
+    # @return [Hash{Symbol => Object}]
     def defaults
       {
         repeat_delay: 0.3,
