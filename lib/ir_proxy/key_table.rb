@@ -65,7 +65,7 @@ class IrProxy::KeyTable
   # @return [String, Symbol] for enforced protocol
   attr_reader :protocol
 
-  # @ertrun [Pathname]
+  # @return [Pathname]
   attr_reader :config_path
 
   # Read file for given protocol.
