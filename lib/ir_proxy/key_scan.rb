@@ -94,7 +94,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
     protected
 
-    # @paran [Hash{Symbol => Object}] scan
+    # @param [Hash{Symbol => Object}] scan
     #
     # @return [Hash{Symbol => Object}]
     def prepare(scan)
@@ -117,7 +117,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # Get additions for parsed result.
   #
-  # @return Hash{Symbol => Object}
+  # @return [Hash{Symbol => Object}]
   def parsed_additions
     return {} if self.parsed.empty?
 
