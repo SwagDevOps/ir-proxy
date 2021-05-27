@@ -7,17 +7,25 @@
 # There is NO WARRANTY, to the extent permitted by law.
 
 require_relative '../config'
-require 'sys/proc'
 require 'pathname'
 
-# Read config file
+# Read config file.
+#
+# ```yaml
+# x-defaults: &defaults
+#   keymap: 'keymaps/default.yml'
+#   dump: true
+#
+# adapter:
+#   name: xdotool
+#   <<: *defaults
+# ```
 class IrProxy::Config::File < Pathname
   autoload(:YAML, 'yaml')
 
   # @param [String, Pathname] path
   def initialize(path, **options)
-    super(path)
-    self.optional = !!(options[:optional])
+    super(path).tap { self.optional = !!(options[:optional]) }.freeze
   end
 
   def optional?
@@ -28,11 +36,16 @@ class IrProxy::Config::File < Pathname
   #
   # @return [Hash{Symbol => Object}]
   def parse
-    YAML.safe_load(self.read).yield_self { |h| h.transform_keys(&:to_sym).to_h.freeze }
-  rescue Errno::ENOENT => e
-    return {} if optional?
+    yaml(self.to_path).tap do
+    rescue Errno::ENOENT => e
+      return {} if optional?
 
-    raise e
+      raise e
+    end.transform_keys(&:to_sym).tap do |config|
+      config.fetch(:adapter, nil)&.fetch('keymap', nil).tap do |keymap|
+        config[:adapter]['keymap'] = yaml(keymap) if keymap.is_a?(String)
+      end
+    end
   end
 
   protected
@@ -40,6 +53,15 @@ class IrProxy::Config::File < Pathname
   # @return [Boolean]
   attr_accessor :optional
 
-  # @return [String]
-  attr_accessor :progname
+  # @param [String] filepath
+  #
+  # @return [Object]
+  def yaml(filepath)
+    Pathname.new(filepath).yield_self do |file|
+      Dir.chdir(self.dup.dirname) { YAML.safe_load(file.read, [], [], true) }.tap do |parsed|
+        # reject extensions
+        parsed.reject { |k, _| /^x-.+/ =~ k.to_s }.to_h
+      end
+    end
+  end
 end
