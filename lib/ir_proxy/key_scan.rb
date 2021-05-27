@@ -12,8 +12,14 @@ require_relative '../ir_proxy'
 #
 # @see https://www.sbprojects.net/knowledge/ir/rc6.php
 class IrProxy::KeyScan
+  # Expression used to capture incoming lines
+  #
+  # Sample lines:
+  #
+  # ```
   # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422 toggle=1
   # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422
+  # ```
   REGEXP = /^(?<time>[0-9]+\.[0-9]+):\s+
 lirc\s+protocol\((?<protocol>.*)\):\s+
 scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
