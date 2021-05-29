@@ -1,0 +1,64 @@
+---
+AUDIO: null
+BLUE: null
+BRIGHTNESSDOWN: null
+BRIGHTNESSUP: null
+CAMERA: null
+CHANNELDOWN: Page_Down
+CHANNELUP: Page_Up
+DELETE: BackSpace
+DOWN: null # Down
+DVD: null
+EJECTCD: null
+ENTER: null # KP_Enter
+EPG: e
+EXIT: BackSpace
+FASTFORWARD: f # Right
+GREEN: null
+INFO: i
+LANGUAGE: null
+LEFT: null # or Left
+MEDIA: F12 # flag key
+MESSENGER:
+MODE: null
+MUTE: null # or XF86AudioMute
+NEXT: Right
+NUMERIC_0: 0
+NUMERIC_1: 1
+NUMERIC_2: 2
+NUMERIC_3: 3
+NUMERIC_4: 4
+NUMERIC_5: 5
+NUMERIC_6: 6
+NUMERIC_7: 7
+NUMERIC_8: 8
+NUMERIC_9: 9
+NUMERIC_POUND: null
+NUMERIC_STAR: null
+OK: KP_Enter
+PAUSE: space
+PLAY: space
+PLAYER: null
+PLAYPAUSE: null
+POWER2: null
+PRESENTATION:
+PREVIOUS: Left
+PRINT: null
+PVR: null
+RADIO: null
+RECORD: m
+RED: null
+REWIND: r # Left
+RIGHT: null # or Right
+SLEEP: null # already mapped
+STOP: x
+SUBTITLE: l # Next subtitle | Lock preset (Music visualisation)
+TITLE: null
+TUNER: null
+TV: null
+UP: null # or Up
+VIDEO: null
+VOLUMEDOWN: null # or XF86AudioLowerVolume
+VOLUMEUP: null # or XF86AudioRaiseVolume
+YELLOW: null
+ZOOM: null
