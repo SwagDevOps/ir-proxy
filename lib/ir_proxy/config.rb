@@ -12,6 +12,7 @@ require_relative '../ir_proxy'
 class IrProxy::Config
   autoload(:Pathname, 'pathname')
   autoload(:XDG, 'xdg')
+  autoload(:YAML, 'yaml')
 
   {
     Defaults: 'defaults',
@@ -54,6 +55,10 @@ class IrProxy::Config
   # @return [Hash]
   def to_h
     Defaults.to_h.merge(self.loaded.clone)
+  end
+
+  def to_yaml
+    YAML.dump(self.to_h)
   end
 
   # @param [String, Symbol] key
