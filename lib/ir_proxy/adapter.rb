@@ -12,25 +12,21 @@ require_relative '../ir_proxy'
 #
 # Act as a factory, where target is implicit and based on ``config``.
 class IrProxy::Adapter
-  # @formatter:off
   {
     Adapter: 'adapter',
     Dummy: 'dummy',
     HasLogger: 'has_logger',
     Xdotool: 'xdotool',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("adapter/#{fp}")) }
-  # @formatter:on
 
   class << self
     # Get an instance of adapter.
     #
     # @return [IrProxy::Adapter::Adapter]
     def instance(**kwargs)
-      (kwargs[:config] || IrProxy[:config]).to_h.tap do |config|
-        config.fetch(:adapter, {}).fetch('name', 'xdotool').to_sym.tap do |k|
-          return self.fetch(k)
-        end
-      end
+      (kwargs[:config] || IrProxy[:config]).to_h.yield_self do |config|
+        config.fetch(:adapter, nil)&.to_sym
+      end.yield_self { |k| self.fetch(k) }
     end
 
     protected
@@ -43,14 +39,12 @@ class IrProxy::Adapter
       adapters.fetch(*args)
     end
 
-    # Find listeners from container.
+    # Retrieve adapters stored on container.
     #
-    # @return [Hash{Symbol => Listener|Object}]
+    # @return [Hash{Symbol => IrProxy::Adapter::Adapter}]
     def adapters
       IrProxy.container.keys.map do |id|
-        if /^adapters:/ =~ id.to_s
-          [id.to_s.gsub(/^adapters:/, '').to_sym, IrProxy[id]]
-        end
+        [id.to_s.gsub(/^adapters:/, '').to_sym, IrProxy[id]] if /^adapters:/ =~ id.to_s
       end.compact.to_h
     end
   end
