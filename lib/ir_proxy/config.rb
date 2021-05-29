@@ -57,8 +57,15 @@ class IrProxy::Config
     Defaults.to_h.merge(self.loaded.clone)
   end
 
-  def to_yaml
-    YAML.dump(self.to_h)
+  # Get a string representation for config (compatible).
+  #
+  # @return [String]
+  def dump
+    self.to_h
+        .transform_keys(&:to_s)
+        .reject { |k, _| k.to_s =~ /^(imports)$/ }
+        .to_h
+        .yield_self { |h| YAML.dump(h) }
   end
 
   # @param [String, Symbol] key
