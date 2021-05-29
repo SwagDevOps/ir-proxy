@@ -12,20 +12,11 @@ require_relative '../ir_proxy'
 class IrProxy::Config
   autoload(:Pathname, 'pathname')
   autoload(:XDG, 'xdg')
-  autoload(:File, "#{__dir__}/config/file")
 
-  class << self
-    # Defaults config values.
-    #
-    # @return [Hash{Symbol => Object}]
-    def defaults
-      {
-        repeat_delay: 0.3,
-        logger: true,
-        protocol: nil,
-      }
-    end
-  end
+  {
+    Defaults: 'defaults',
+    File: 'file',
+  }.each { |s, fp| autoload(s, "#{__dir__}/config/#{fp}") }
 
   # @param [String. nil] file
   def initialize(file = nil, **options)
@@ -62,7 +53,7 @@ class IrProxy::Config
 
   # @return [Hash]
   def to_h
-    self.class.__send__(:defaults).merge(self.loaded.clone)
+    Defaults.to_h.merge(self.loaded.clone)
   end
 
   # @param [String, Symbol] key
