@@ -32,6 +32,11 @@ module IrProxy::Cli::Command::Behavior
     on_start(:sample, options, [], &block)
   end
 
+  # @param [Hash] options
+  def on_config(options, &block)
+    on_start(:config, options, [:config], &block)
+  end
+
   # @param [String, Symbol] command_name
   # @param [Hash] options
   # @param [Array<String, Symbol>] appliables

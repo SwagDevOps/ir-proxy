@@ -37,6 +37,20 @@ class IrProxy::Cli::Command
     on_pipe(options) { IrProxy::Pipe.new.tap(&:call) }
   end
 
+  desc('config', 'Display config')
+  option(:config, type: :string)
+
+  # React to event received through (CLI) given STDIN pipe.
+  #
+  # @return [void]
+  def config
+    on_config(options) do
+      IrProxy[:config].dump.tap do |source|
+        IrProxy[:'hl.yaml'].call(source).tap { |s| puts(s) }
+      end
+    end
+  end
+
   desc('sample', 'Print samples on STDOUT')
 
   # Print samples periodically on STDOUT.
