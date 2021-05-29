@@ -33,6 +33,16 @@
       IrProxy::Throttler.new(rules)
     end
   end,
+  'hl.yaml': lambda do
+    lambda do |source, output: $stdout|
+      # autoload(:Rouge, 'rouge')
+      require 'rouge'
+
+      return source unless output.isatty
+
+      Rouge::Formatters::Terminal256.new.format(Rouge::Lexers::YAML.new.lex(source))
+    end
+  end,
   # events listeners ------------------------------------------------
   'events:line.incoming': -> { IrProxy::Events::LineIncoming.new },
   'events:key_scan': -> { IrProxy::Events::KeyScan.new },
