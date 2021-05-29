@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/cli/command/behavior.rb",
     "lib/ir_proxy/clock.rb",
     "lib/ir_proxy/config.rb",
+    "lib/ir_proxy/config/defaults.rb",
     "lib/ir_proxy/config/file.rb",
     "lib/ir_proxy/container.rb",
     "lib/ir_proxy/events.rb",
@@ -68,6 +69,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("chrono_logger", ["~> 1.1"])
   s.add_runtime_dependency("concurrent-ruby", ["~> 1.1"])
   s.add_runtime_dependency("kamaze-version", ["~> 1.0"])
+  s.add_runtime_dependency("rouge", ["~> 3.26"])
   s.add_runtime_dependency("stibium-bundled", ["~> 0.0.1", ">= 0.0.4"])
   s.add_runtime_dependency("sys-proc", ["~> 1.1"])
   s.add_runtime_dependency("thor", ["~> 0.20"])
