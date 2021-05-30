@@ -46,7 +46,7 @@ class IrProxy::Cli::Command
   def config
     on_config(options) do
       IrProxy[:config].dump.tap do |source|
-        IrProxy[:'hl.yaml'].call(source).tap { |s| puts(s) }
+        IrProxy[:yaml_highlighter].call(source).tap { |s| puts(s) }
       end
     end
   end
