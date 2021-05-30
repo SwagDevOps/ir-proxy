@@ -15,10 +15,7 @@ class IrProxy::Pipe::Stream
   def initialize(io, io_mode = nil)
     @io = io
     @buffer = []
-    # @formatter:off
-    (io_mode || Fcntl::O_NDELAY | Fcntl::O_NONBLOCK | Fcntl::O_RDONLY)
-      .tap { |v| @io_mode = v }
-    # @formatter:on
+    @io_mode = io_mode || (Fcntl::O_NDELAY | Fcntl::O_NONBLOCK | Fcntl::O_RDONLY)
   end
 
   def listen
