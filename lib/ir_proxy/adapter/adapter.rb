@@ -10,6 +10,10 @@ require_relative '../adapter'
 
 # Base adapter to perform keyboard input.
 #
+# Config is based on the adapter identifier (name).
+# As a result, adapdter does not store a gliobal config object,
+# but the necessary subset extracted from the global config.
+#
 # @abstract
 class IrProxy::Adapter::Adapter
   include(IrProxy::Adapter::HasLogger)
