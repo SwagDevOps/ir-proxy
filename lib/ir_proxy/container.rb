@@ -54,6 +54,8 @@ class IrProxy::Container
     resolve(id.to_sym).dependencies.fetch(id.to_sym)
   end
 
+  alias [] get
+
   # @return [Boolean]
   def has?(id)
     keys.include?(id.to_sym)
