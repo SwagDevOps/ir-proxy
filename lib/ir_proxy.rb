@@ -26,6 +26,7 @@ module IrProxy
     Pipe: 'pipe',
     ProcessManager: 'process_manager',
     Sampler: 'sampler',
+    SyntaxHighlighter: 'syntax_highlighter',
     Throttler: 'throttler',
   }.each { |s, fp| autoload(s, "#{__dir__}/ir_proxy/#{fp}") }
 
