@@ -58,7 +58,7 @@ class IrProxy::Sampler
 
   # @return [Float]
   def now
-    Process.clock_gettime(Process::CLOCK_MONOTONIC).to_f
+    Process.clock_gettime(IrProxy::Clock::TYPE).to_f
   end
 
   # @return {Symbol => Array<String>}
