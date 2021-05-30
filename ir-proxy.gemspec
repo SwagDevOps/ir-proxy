@@ -61,6 +61,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/sampler.rb",
     "lib/ir_proxy/sampler/line.rb",
     "lib/ir_proxy/services.rb",
+    "lib/ir_proxy/syntax_highlighter.rb",
     "lib/ir_proxy/throttler.rb",
     "lib/ir_proxy/version.rb",
     "lib/ir_proxy/version.yml",
