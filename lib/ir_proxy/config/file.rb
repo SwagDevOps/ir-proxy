@@ -49,7 +49,7 @@ class IrProxy::Config::File < Pathname
   # @return [Boolean]
   attr_accessor :optional
 
-  # @param [Hash{String => Object}]
+  # @param [Hash{String => Object}] config
   def transform(config)
     config.transform_keys(&:to_sym).tap do |c|
       c.fetch(:imports, {}).each { |k, fp| c[k.to_sym] = yaml(fp) }
