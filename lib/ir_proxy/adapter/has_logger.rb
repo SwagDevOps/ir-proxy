@@ -12,9 +12,13 @@ require_relative '../adapter'
 module IrProxy::Adapter::HasLogger
   protected
 
-  # @return IrProxy::Logger
+  def logger?
+    !logger.nil?
+  end
+
+  # @return []IrProxy::Logger, nil]
   def logger
-    @logger || IrProxy[:logger]
+    @logger
   end
 
   def log(message, **kwargs)

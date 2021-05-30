@@ -43,8 +43,8 @@ class IrProxy::Adapter
     #
     # @return [Hash{Symbol => IrProxy::Adapter::Adapter}]
     def adapters
-      IrProxy.container.keys.map do |id|
-        [id.to_s.gsub(/^adapters:/, '').to_sym, IrProxy[id]] if /^adapters:/ =~ id.to_s
+      IrProxy.container.keys.sort.map do |id|
+        /^adapters:/.yield_self { |reg| [id.to_s.gsub(reg, '').to_sym, IrProxy[id]] if reg =~ id.to_s }
       end.compact.to_h
     end
   end

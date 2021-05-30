@@ -15,35 +15,30 @@ class IrProxy::Adapter::Adapter
   include(IrProxy::Adapter::HasLogger)
 
   # @return [String]
-  attr_reader :executable
-
-  # @return [String]
   attr_reader :name
 
   def initialize(**kwargs)
-    @executable = kwargs[:executbale] || self.class.executable
-    @config = kwargs[:config] || IrProxy[:config]
-    @logger = kwargs[:logger] || IrProxy[:logger]
-    @name = self.class.identifier
-    @process_manager = kwargs[:process_manager] || IrProxy[:process_manager]
+    self.tap do
+      @name = self.class.identifier
+      @config = kwargs[:config] || IrProxy[:config].to_h.fetch(:adapters, {}).fetch(self.name.to_s, {})
+      @logger = kwargs[:logger] || IrProxy[:logger]
+    end.freeze
   end
 
   def dummy?
     name == :dummy
   end
 
-  # Get adapter config.
-  #
-  # @return [Hash]
-  def adapter_config
-    config[:adapter] || {}
+  # @return [String]
+  def executbale
+    config.fetch('executable', self.class.executable)
   end
 
   # Get keymap from config
   #
   # @return [Hash]
   def keymap
-    (config[:keymap] || {})
+    config.fetch('keymap', {}).freeze
   end
 
   # Get mapping for given key name.
@@ -96,20 +91,19 @@ class IrProxy::Adapter::Adapter
 
   protected
 
-  # @return [IrProxy::ProcessManager]
-  attr_reader :process_manager
-
   # @return [IrPoxy::Config]
   attr_reader :config
 
-  class << self
-    attr_accessor :executable
+  def logger
+    super if !!config.fetch('logger', true)
   end
 
-  # @return [IrProxy::Logger, nil]
-  def logger
-    (@config || IrProxy[:config])[:logger].tap do |b|
-      return b ? super : nil
-    end
+  class << self
+    # @return [String ]
+    attr_reader :executable
+
+    protected
+
+    attr_writer :executable
   end
 end

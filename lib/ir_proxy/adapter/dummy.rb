@@ -27,6 +27,6 @@ class IrProxy::Adapter::Dummy < IrProxy::Adapter::Adapter
   end
 
   def dump?
-    !!config[:adapter]&.fetch('dump', false)
+    !!config.fetch('dump', false)
   end
 end
