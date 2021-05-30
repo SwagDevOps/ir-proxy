@@ -26,6 +26,7 @@ class IrProxy::Clock
     to_d.to_f
   end
 
+  # @return [BigDecimal]
   def to_d
     time.dup
   end
@@ -65,16 +66,18 @@ class IrProxy::Clock
 
   protected
 
-  # @return [Float]
+  # @return [BigDecimal]
   attr_reader :time
 
   # @api private
   #
   # @param [Float, IrProxy::Clock] value
+  #
+  # @return [BigDecimal]
   def decimal(value)
     # noinspection RubyResolve
     require 'bigdecimal'
 
-    BigDecimal(value.to_f.to_s)
+    value.to_f.yield_self { |v| BigDecimal(v.to_s) }
   end
 end
