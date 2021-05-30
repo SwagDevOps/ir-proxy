@@ -13,6 +13,9 @@ require_relative '../ir_proxy'
 # @see https://blog.dnsimple.com/2018/03/elapsed-time-with-ruby-the-right-way/
 # @see https://webdevdesigner.com/q/what-is-the-difference-between-clock-monotonic-clock-monotonic-raw-120918/
 class IrProxy::Clock
+  # @type [Integer]
+  TYPE = Process::CLOCK_MONOTONIC
+
   # @param [Float] time
   def initialize(time: nil)
     self.tap { @time = decimal(time || self.class.now).freeze }.freeze
@@ -42,7 +45,7 @@ class IrProxy::Clock
 
     # @return [Float]
     def time
-      Process.clock_gettime(Process::CLOCK_MONOTONIC).to_f
+      Process.clock_gettime(TYPE).to_f
     end
   end
 
@@ -69,6 +72,7 @@ class IrProxy::Clock
   #
   # @param [Float] value
   def decimal(value)
+    # noinspection RubyResolve
     require 'bigdecimal'
 
     BigDecimal(value.to_f.to_s)
