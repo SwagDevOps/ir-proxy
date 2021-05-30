@@ -45,16 +45,20 @@ class IrProxy::Sampler
 
   def output(lines, interval = 0.5)
     lines.each do |line|
-      Time.now.tap do |time|
+      now.tap do |time|
         { time: time, timestamp: '%0.6f' % time.to_f }.tap do |vars|
-          line = Line.new("<%= timestamp %>: #{line}", **vars).result
+          Line.new("<%= timestamp %>: #{line}", **vars).tap { |output| $stdout.puts(output) }
 
-          $stdout.puts(line)
           $stdout.flush
         end
       end
     end
     sleep(interval)
+  end
+
+  # @return [Float]
+  def now
+    Process.clock_gettime(Process::CLOCK_MONOTONIC).to_f
   end
 
   # @return {Symbol => Array<String>}

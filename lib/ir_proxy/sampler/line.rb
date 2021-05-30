@@ -15,15 +15,26 @@
 # ```
 class IrProxy::Sampler::Line
   autoload(:ERB, 'erb')
-  autoload(:OpenStruct, 'ostruct')
 
   def initialize(template, **variables)
-    @template = ERB.new(template)
-    @context = OpenStruct.new(**variables)
+    self.tap do
+      @template = ERB.new(template)
+      @context = Struct.new(*variables.keys).new(*variables.values).freeze
+    end.freeze
   end
 
   # @return [String]
   def result
-    @template.result(@context.instance_eval { binding })
+    template.result(context.instance_eval { binding })
   end
+
+  alias to_s result
+
+  protected
+
+  # @return [ERB]
+  attr_reader :template
+
+  # @return [Struct]
+  attr_reader :context
 end
