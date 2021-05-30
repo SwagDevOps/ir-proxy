@@ -70,7 +70,7 @@ class IrProxy::Clock
 
   # @api private
   #
-  # @param [Float] value
+  # @param [Float, IrProxy::Clock] value
   def decimal(value)
     # noinspection RubyResolve
     require 'bigdecimal'
