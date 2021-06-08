@@ -83,7 +83,7 @@ class IrProxy::Adapter::Adapter
 
   # Get a command line for given key name.
   #
-  # @todo actual implementation
+  # @param [String] key_name
   #
   # @return [Array<String>, nil]
   def command_for(key_name)
@@ -107,11 +107,12 @@ class IrProxy::Adapter::Adapter
   end
 
   class << self
-    # @return [String ]
+    # @return [String]
     attr_reader :executable
 
     protected
 
+    # @type [String]
     attr_writer :executable
   end
 end
