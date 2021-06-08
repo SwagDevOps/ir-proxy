@@ -23,15 +23,9 @@
       IrProxy::KeyScan => lambda do |current, previous|
         # @type [IrProxy::KeyScan] current
         # @type [IrProxy::KeyScan] previous
-        ([[:protocol, :scancode, :toggle]] * 2).map.with_index do |keys, index|
-          keys.map { |key| [current, previous].fetch(index).to_h.fetch(key) }
-        end.yield_self do |values|
-          values.fetch(0) != values.fetch(1)
-        end
+        !current.eql?(previous)
       end
-    }.yield_self do |rules|
-      IrProxy::Throttler.new(rules)
-    end
+    }.yield_self { |rules| IrProxy::Throttler.new(rules) }
   end,
   yaml_highlighter: -> { IrProxy::SyntaxHighlighter.new(:YAML) },
   # events listeners ------------------------------------------------
