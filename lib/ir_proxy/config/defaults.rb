@@ -18,6 +18,7 @@ module IrProxy::Config::Defaults
         repeat_delay: 0.3,
         logger: true,
         adapter: 'dummy',
+        adapters: {},
       }
     end
   end
