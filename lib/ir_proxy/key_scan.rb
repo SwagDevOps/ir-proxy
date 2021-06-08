@@ -20,6 +20,8 @@ class IrProxy::KeyScan
   # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422 toggle=1
   # 62086.432173: lirc protocol(rc6_mce): scancode = 0x800f7422
   # ```
+  #
+  # @api private
   REGEXP = /^(?<time>[0-9]+\.[0-9]+):\s+
 lirc\s+protocol\((?<protocol>.*)\):\s+
 scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
@@ -27,12 +29,17 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 /x.freeze
 
   # Keys used to compare key scan for equality.
+  #
+  # @api private
+  #
+  # @see #comparable
+  # @see #eql?
   COMPARABLE_KEYS = [:protocol, :scancode, :toggle].freeze
 
   # @return [IrProxy::Clock]
   attr_reader :time
 
-  # @return [Hash{String => String}]
+  # @return [Hash{Symbol => Object}]
   attr_reader :parsed
 
   # @param [String] line
@@ -47,11 +54,13 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # Get a subset of the `Hash` representation.
   #
+  # @see #eql?
+  #
   # @return [Hash{Symbol => Object}]
   def comparable
     self.to_h.yield_self do |h|
       COMPARABLE_KEYS
-        .map { |k| [k, h.fetch(k)] }
+        .map { |k| [k, h.fetch(k, nil)] }
         .to_h
         .transform_values(&:freeze)
         .freeze
@@ -62,7 +71,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   #
   # @return [Boolean]
   def eql?(other)
-    return false unless other.respond_to?(:comparable)
+    return false unless other.respond_to?(:comparable) and other.comparable.is_a?(Hash)
 
     self.comparable == other.comparable
   end
@@ -75,7 +84,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
     to_h.empty?
   end
 
-  # @return [String, nil] lowercase
+  # @return [Symbol] lowercase
   def protocol
     to_h[:protocol]
   end
@@ -154,7 +163,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
     {
       clock: time,
-      name: keytable.call(parsed[:value], protocol: parsed[:protocol])
+      name: keytable.call(parsed[:value].to_i, protocol: parsed[:protocol].to_sym)
     }
   end
 end
