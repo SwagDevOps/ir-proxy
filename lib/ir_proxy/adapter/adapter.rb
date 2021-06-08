@@ -26,6 +26,7 @@ class IrProxy::Adapter::Adapter
       @name = self.class.identifier
       @config = kwargs[:config] || IrProxy[:config].to_h.fetch(:adapters, {}).fetch(self.name.to_s, {})
       @logger = kwargs[:logger] || IrProxy[:logger]
+      @process_manager = kwargs[:process_manager] || IrProxy[:process_manager]
     end.freeze
   end
 
@@ -34,7 +35,7 @@ class IrProxy::Adapter::Adapter
   end
 
   # @return [String]
-  def executbale
+  def executable
     config.fetch('executable', self.class.executable)
   end
 
@@ -97,6 +98,9 @@ class IrProxy::Adapter::Adapter
 
   # @return [IrPoxy::Config]
   attr_reader :config
+
+  # @return [IrProxy::ProcessManager]
+  attr_reader :process_manager
 
   def logger
     super if !!config.fetch('logger', true)
