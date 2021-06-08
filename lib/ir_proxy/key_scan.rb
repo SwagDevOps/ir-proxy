@@ -26,6 +26,9 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 (?<toggle>toggle=[0-9]+)?
 /x.freeze
 
+  # Keys used to compare key scan for equality.
+  COMPARABLE_KEYS = [:protocol, :scancode, :toggle].freeze
+
   # @return [IrProxy::Clock]
   attr_reader :time
 
@@ -40,6 +43,28 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
       @keytable = kwargs[:keytable] || IrProxy[:keytable]
       @time = (kwargs[:clock] || IrProxy[:clock]).call.freeze
     end.freeze
+  end
+
+  # Get a subset of the `Hash` representation.
+  #
+  # @return [Hash{Symbol => Object}]
+  def comparable
+    self.to_h.yield_self do |h|
+      COMPARABLE_KEYS
+        .map { |k| [k, h.fetch(k)] }
+        .to_h
+        .transform_values(&:freeze)
+        .freeze
+    end
+  end
+
+  # @param [IrProxy::KeyScan] other
+  #
+  # @return [Boolean]
+  def eql?(other)
+    return false unless other.respond_to?(:comparable)
+
+    self.comparable == other.comparable
   end
 
   def to_s
