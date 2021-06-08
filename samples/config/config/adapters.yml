@@ -1,6 +1,7 @@
 ---
 x-defaults: &defaults
   dump: true
+  logger: true # default: true
 # adapters -------------------------------------------------------------
 dummy:
   <<: *defaults
