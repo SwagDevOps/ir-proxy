@@ -23,7 +23,7 @@
       IrProxy::KeyScan => lambda do |current, previous|
         # @type [IrProxy::KeyScan] current
         # @type [IrProxy::KeyScan] previous
-        !current.eql?(previous)
+        !current.throttleable?(previous)
       end
     }.yield_self { |rules| IrProxy::Throttler.new(rules) }
   end,

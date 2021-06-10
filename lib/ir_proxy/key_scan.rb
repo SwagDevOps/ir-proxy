@@ -32,9 +32,9 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   #
   # @api private
   #
-  # @see #comparable
-  # @see #eql?
-  COMPARABLE_KEYS = [:protocol, :scancode, :toggle].freeze
+  # @see #throttleable
+  # @see #throttleable?
+  THROTTLEABLE_KEYS = [:protocol, :scancode, :toggle].freeze
 
   # @return [IrProxy::Clock]
   attr_reader :time
@@ -54,12 +54,12 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # Get a subset of the `Hash` representation.
   #
-  # @see #eql?
+  # @see #throttleable?
   #
   # @return [Hash{Symbol => Object}]
-  def comparable
+  def throttleable
     self.to_h.yield_self do |h|
-      COMPARABLE_KEYS
+      THROTTLEABLE_KEYS
         .map { |k| [k, h.fetch(k, nil)] }
         .to_h
         .transform_values(&:freeze)
@@ -67,13 +67,15 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
     end
   end
 
+  # Denote given `other` is throttleable against current instance.
+  #
   # @param [IrProxy::KeyScan] other
   #
   # @return [Boolean]
-  def eql?(other)
-    return false unless other.respond_to?(:comparable) and other.comparable.is_a?(Hash)
+  def throttleable?(other)
+    return false unless other.is_a?(self.class)
 
-    self.comparable == other.comparable
+    self.throttleable == other.throttleable
   end
 
   def to_s
