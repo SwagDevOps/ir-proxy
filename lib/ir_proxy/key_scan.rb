@@ -36,6 +36,12 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   # @see #throttleable?
   THROTTLEABLE_KEYS = [:protocol, :scancode, :toggle].freeze
 
+  {
+    Throttleable: 'throttleable',
+  }.each { |s, fp| autoload(s, "#{__dir__}/key_scan/#{fp}") }
+
+  include IrProxy::KeyScan::Throttleable
+
   # @return [IrProxy::Clock]
   attr_reader :time
 
@@ -50,32 +56,6 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
       @keytable = kwargs[:keytable] || IrProxy[:keytable]
       @time = (kwargs[:clock] || IrProxy[:clock]).call.freeze
     end.freeze
-  end
-
-  # Get a subset of the `Hash` representation.
-  #
-  # @see #throttleable?
-  #
-  # @return [Hash{Symbol => Object}]
-  def throttleable
-    self.to_h.yield_self do |h|
-      THROTTLEABLE_KEYS
-        .map { |k| [k, h.fetch(k, nil)] }
-        .to_h
-        .transform_values(&:freeze)
-        .freeze
-    end
-  end
-
-  # Denote given `other` is throttleable against current instance.
-  #
-  # @param [IrProxy::KeyScan] other
-  #
-  # @return [Boolean]
-  def throttleable?(other)
-    return false unless other.is_a?(self.class)
-
-    self.throttleable == other.throttleable
   end
 
   def to_s
