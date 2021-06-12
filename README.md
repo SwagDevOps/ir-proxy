@@ -99,6 +99,8 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 * [Remote controller tables — The Linux Kernel documentation](https://www.kernel.org/doc/html/v4.14/media/uapi/rc/rc-tables.html)
 * [xdotool | Linux man page](http://linuxcommandlibrary.com/man/xdotool.html)
 * [xbmc-system/keymaps/keyboard.xml][xbmc/system/keymaps/keyboard]
+* [xdotool list of key codes][wikis/xdotool-list-of-key-codes]
+* [XF86 keyboard symbols][wikis/XF86_keyboard_symbols]
 
 <!-- hyeprlinks -->
 
@@ -107,3 +109,5 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -p
 [wikipedia:xorg]: https://en.wikipedia.org/wiki/X.Org_Server
 [freedesktop:basedir-spec]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 [xbmc/system/keymaps/keyboard]: https://fossies.org/linux/xbmc/system/keymaps/keyboard.xml
+[wikis/xdotool-list-of-key-codes]: https://gitlab.com/cunidev/gestures/-/wikis/xdotool-list-of-key-codes
+[wikis/XF86_keyboard_symbols]: https://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols
