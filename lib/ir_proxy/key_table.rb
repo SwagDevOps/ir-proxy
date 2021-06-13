@@ -22,11 +22,10 @@ class IrProxy::KeyTable
     AbortError: 'abort_error',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("key_table/#{fp}")) }
 
+  # @option kwargs [String] :config_path Path to the config directory
   def initialize(**kwargs)
     self.tap do
-      (kwargs[:config] || IrProxy['config']).to_path.tap do |config_path|
-        @config_path = Pathname.new(config_path).freeze
-      end
+      self.config_path = kwargs[:config_path] || IrProxy['config'].to_path
     end.freeze
   end
 
@@ -67,6 +66,14 @@ class IrProxy::KeyTable
 
   # @return [Pathname]
   attr_reader :config_path
+
+  # @attr_writer config_path [String]
+  #
+  # @param [String] config_path
+  # @return [Pathname]
+  def config_path=(config_path)
+    @config_path = Pathname.new(config_path).freeze
+  end
 
   # Read file for given protocol.
   #
