@@ -23,6 +23,13 @@ sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe
 sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe --config /etc/ir-proxy/config.yml
 ```
 
+### Testing 
+
+```sh
+bundle install --standalone
+sudo socat - EXEC:'ir-keytable -tc',pty | ruby bin/ir-proxy pipe --config config.sample.yml
+```
+
 ## Sample ``systemd`` service
 
 ```ini
@@ -63,7 +70,7 @@ export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
 (socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | \
-    sudo -Eu "${X_USER}" ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
+    sudo -nEu "${X_USER}" ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
 ```sh
