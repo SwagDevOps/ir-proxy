@@ -25,6 +25,8 @@ module IrProxy::KeyScan::Throttleable
 
   protected
 
+  # @api private
+  #
   # @return [Array<Symbol>]
   def throttleable_keys
     self.class.const_get(:THROTTLEABLE_KEYS)
