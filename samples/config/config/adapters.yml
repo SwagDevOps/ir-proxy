@@ -4,6 +4,7 @@ x-defaults: &defaults
   logger: true # default: true
 # adapters -------------------------------------------------------------
 dummy:
+  keymap: 'config/keymap.yml'
   <<: *defaults
 xdotool:
   keymap: 'config/keymap.yml'
