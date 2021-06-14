@@ -18,6 +18,7 @@
   sampler: -> { IrProxy::Sampler.new },
   logger: -> { IrProxy::Logger.new('/dev/stdout', progname: IrProxy[:progname]) },
   keytable: -> { IrProxy::KeyTable.new },
+  protocol: -> { IrProxy.container[:config].to_h.fetch(:protocol, nil) }, # Get value from config
   throttler: lambda do
     {
       IrProxy::KeyScan => lambda do |current, previous|
