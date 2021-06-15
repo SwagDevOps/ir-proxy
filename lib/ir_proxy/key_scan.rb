@@ -37,6 +37,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   THROTTLEABLE_KEYS = [:protocol, :scancode, :toggle].freeze
 
   {
+    Protocol: 'protocol',
     Throttleable: 'throttleable',
   }.each { |s, fp| autoload(s, "#{__dir__}/key_scan/#{fp}") }
 
@@ -49,12 +50,17 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   attr_reader :parsed
 
   # @param [String] line
+  #
+  # @option kwargs [IrPoxy::Keytable] :keytable
+  # @option kwargs [IrProxy::Clock] :clock
+  # @option kwargs [String, Symbol] :protocol
   def initialize(line, **kwargs)
     self.tap do
       @line = line.to_str
       @parsed = self.class.parse(line).to_h.transform_values(&:freeze).freeze
       @keytable = kwargs[:keytable] || IrProxy[:keytable]
       @time = (kwargs[:clock] || IrProxy[:clock]).call.freeze
+      @enforced_protocol = (kwargs[:protocol] || IrProxy['protocol']).to_sym
     end.freeze
   end
 
@@ -66,9 +72,11 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
     to_h.empty?
   end
 
-  # @return [Symbol] lowercase
+  # @see IrProxy::KeyScan::Protocol
+  #
+  # @return [Symbol] SHOULD be lowercase
   def protocol
-    to_h[:protocol]
+    to_h[:protocol].to_sym
   end
 
   # @return [String]
@@ -83,6 +91,12 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   def to_h
     parsed.dup.to_h.merge(parsed_additions).yield_self do |h|
+      if h.key?(:protocol)
+        {
+          protocol: IrProxy::KeyScan::Protocol.new(h.fetch(:protocol), self.enforced_protocol)
+        }.yield_self { |addition| h.merge!(addition) }
+      end
+
       Hash[h.sort].transform_values(&:freeze).freeze
     end
   end
@@ -136,6 +150,9 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   # @return [IrProxy::KeyTable]
   attr_reader :keytable
+
+  # @return [Symbol]
+  attr_reader :enforced_protocol
 
   # Get additions for parsed result.
   #
