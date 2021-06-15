@@ -11,33 +11,36 @@ require_relative '../key_scan'
 # Describe a protocol.
 #
 # Protocol has an original value and an (optional) forced value.
+# When size is greater than 1, first value is the forced one.
 class IrProxy::KeyScan::Protocol
   def initialize(original, forced = nil)
     @values = [forced, original].compact.uniq.map(&:to_sym).freeze
   end
 
   def forced?
-    values.size > 1
+    self.to_a.size > 1
   end
 
   def original
-    forced? ? values.fetch(1) : self.to_sym
+    self.forced? ? self.to_a.fetch(1) : self.to_sym
   end
 
   def to_sym
-    values.fetch(0)
+    self.to_a.fetch(0)
   end
 
   def to_s
-    to_sym.to_s.freeze
+    self.to_sym.to_s.freeze
   end
 
   # @return [Array<Symbol>]
   def to_a
-    values.dup
+    self.values.dup
   end
 
-  alias inspect to_a
+  def inspect
+    self.forced? ? self.to_a : self.to_sym
+  end
 
   protected
 
