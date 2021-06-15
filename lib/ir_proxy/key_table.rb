@@ -18,10 +18,6 @@ class IrProxy::KeyTable
   autoload(:Pathname, 'pathname')
   autoload(:YAML, 'yaml')
 
-  {
-    AbortError: 'abort_error',
-  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("key_table/#{fp}")) }
-
   # @option kwargs [String] :config_path Path to the config directory
   def initialize(**kwargs)
     self.tap do
@@ -34,11 +30,11 @@ class IrProxy::KeyTable
   # When protocol is set, optional protocol is ignored.
   #
   # @param [Integer] value
-  # @param [String, Symbol, nil] protocol
+  # @param [String, Symbol] protocol
   #
-  # @return String, nil
-  def call(value, protocol: nil)
-    self[ensure_protocol!(protocol)].yield_self do |keymap|
+  # @return [String, nil]
+  def call(value, protocol:)
+    self[protocol].yield_self do |keymap|
       keymap[value]&.yield_self { |v| v.gsub(/^KEY_/, '').upcase.freeze }
     end
   end
@@ -99,16 +95,5 @@ class IrProxy::KeyTable
       config_path,
       Pathname.new(__dir__).join(Pathname.new(__FILE__).basename('.*')),
     ].map { |path| Pathname.new(path).join('keymaps') }
-  end
-
-  # @param [String, Symbol, nil] protocol
-  #
-  # @return Symbol
-  def ensure_protocol!(protocol)
-    (self.protocol || protocol).tap do
-      raise ArgumentError, 'protocol must be set' if self.protocol.nil? and protocol.nil?
-
-      raise AbortError if self.protocol and !protocol.nil? and protocol.to_sym != self.protocol
-    end.to_sym
   end
 end
