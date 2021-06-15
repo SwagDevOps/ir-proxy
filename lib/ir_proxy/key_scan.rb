@@ -91,12 +91,6 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
 
   def to_h
     parsed.dup.to_h.merge(parsed_additions).yield_self do |h|
-      if h.key?(:protocol)
-        {
-          protocol: IrProxy::KeyScan::Protocol.new(h.fetch(:protocol), self.enforced_protocol)
-        }.yield_self { |addition| h.merge!(addition) }
-      end
-
       Hash[h.sort].transform_values(&:freeze).freeze
     end
   end
@@ -160,9 +154,12 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   def parsed_additions
     return {} if self.parsed.empty?
 
-    {
-      clock: time,
-      name: keytable.call(parsed[:value].to_i, protocol: parsed[:protocol].to_sym)
-    }
+    IrProxy::KeyScan::Protocol.new(parsed.fetch(:protocol), self.enforced_protocol).yield_self do |protocol|
+      {
+        clock: time,
+        name: keytable.call(parsed[:value]&.to_i, protocol: protocol.to_sym),
+        protocol: protocol
+      }
+    end
   end
 end
