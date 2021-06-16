@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/key_table.rb",
     "lib/ir_proxy/key_table/keymaps/rc6_0.yml",
     "lib/ir_proxy/key_table/keymaps/rc6_mce.yml",
+    "lib/ir_proxy/key_table/keymaps/rc6_xbox.yml",
     "lib/ir_proxy/logger.rb",
     "lib/ir_proxy/pipe.rb",
     "lib/ir_proxy/pipe/stream.rb",
