@@ -13,7 +13,7 @@
 0x5c: ENTER
 0x54: MEDIA
 0xd:  MUTE
-0xf:  NFO
+0xf:  INFO
 0x10: VOLUMEUP
 0x11: VOLUMEDOWN
 0x20: CHANNELUP
@@ -37,6 +37,7 @@
 0x6f: YELLOW
 0x70: BLUE
 0x76: EXIT
+
 # Additions ------------------------------------------------
 0xbf: SETTINGS
 0xcc: GUIDE
