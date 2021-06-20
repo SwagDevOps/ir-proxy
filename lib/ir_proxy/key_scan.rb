@@ -60,7 +60,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
       @parsed = self.class.parse(line).to_h.transform_values(&:freeze).freeze
       @keytable = kwargs[:keytable] || IrProxy[:keytable]
       @time = (kwargs[:clock] || IrProxy[:clock]).call.freeze
-      @enforced_protocol = (kwargs[:protocol] || IrProxy['protocol']).to_sym
+      @enforced_protocol = (kwargs[:protocol] || IrProxy['protocol'])&.to_sym
     end.freeze
   end
 
