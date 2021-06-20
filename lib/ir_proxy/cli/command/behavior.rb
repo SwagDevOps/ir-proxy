@@ -10,13 +10,11 @@ require_relative '../command'
 
 # Provides command behavior surrounding command execution.
 module IrProxy::Cli::Command::Behavior
-  protected
+  include(IrProxy::Cli::Command::Eventable)
+  include(IrProxy::Cli::Command::Configurable)
+  include(IrProxy::Cli::Command::Processable)
 
-  # @return [IrProxy::EVents::Dispatcher]
-  def events_dispatcher
-    # noinspection RubyYardReturnMatch
-    IrProxy[:events_dispatcher]
-  end
+  protected
 
   # Block surrounding `pipe` command.
   #
@@ -34,18 +32,18 @@ module IrProxy::Cli::Command::Behavior
 
   # @param [Hash] options
   def on_config(options, &block)
-    on_start(:config, options, [:config], &block)
+    on_start(:config, options, [:config, :adapter], &block)
   end
 
   # @param [String, Symbol] command_name
   # @param [Hash] options
   # @param [Array<String, Symbol>] appliables
   def on_start(command_name, options, appliables = [], &block)
-    appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
+    appliables.to_a.each { |m| self.__send__("apply_#{m}", options.transform_keys(&:to_sym)) }
 
-    events_dispatcher.boot unless events_dispatcher.booted?
-
-    command_name.to_sym == :pipe ? process { block.call } : block.call
+    eventable do
+      command_name.to_sym == :pipe ? process { block.call } : block.call
+    end
   end
 
   # Apply `config` option.
@@ -53,11 +51,9 @@ module IrProxy::Cli::Command::Behavior
   # @param [Hash] options
   def apply_config(options)
     self.tap do
-      if options[:config]
-        IrProxy::Config.new(options[:config]).tap do |config|
-          IrProxy.container.reset!.set(:config, config.freeze)
-        end
-      end
+      return self unless options[:config]
+
+      IrProxy::Config.new(options[:config]).tap { |config| with_config(config) }
     end
   end
 
@@ -67,22 +63,7 @@ module IrProxy::Cli::Command::Behavior
   def apply_adapter(options)
     self.tap do
       if options[:adapter]
-        IrProxy[:config][:adapter] = { 'name' => options[:adapter] }
-      end
-    end
-  end
-
-  # Execute given block surrounded by proces manager.
-  #
-  # @return [void]
-  def process(&block)
-    0.tap do |status|
-      IrProxy[:process_manager].handle(managed: true) do |manager|
-        block.call
-      rescue SystemExit => e
-        status = e.status
-      ensure
-        manager.terminate(status)
+        with_config(app_config) { |config| config[:adapter] = options[:adapter] }
       end
     end
   end

@@ -16,6 +16,10 @@ class IrProxy::Cli
   class Command < Thor
     {
       Behavior: 'behavior',
+      Configurable: 'configurable',
+      ContainerAware: 'container_aware',
+      Eventable: 'eventable',
+      Processable: 'processable',
     }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("command/#{fp}")) }
   end
 end
@@ -27,17 +31,6 @@ class IrProxy::Cli::Command
   desc('pipe', 'React to STDIN events')
   option(:config, type: :string)
   option(:adapter, type: :string)
-
-  # rubocop:disable Metrics/ParameterLists
-
-  def initialize(args = nil, options = nil, config = nil, container = nil)
-    super(args, options, config).tap do
-      @container = container || IrProxy.container
-    end
-  end
-
-  # rubocop:enable Metrics/ParameterLists
-
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
@@ -47,7 +40,7 @@ class IrProxy::Cli::Command
 
   desc('config', 'Display config')
   option(:config, type: :string)
-
+  option(:adapter, type: :string)
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
@@ -60,18 +53,10 @@ class IrProxy::Cli::Command
   end
 
   desc('sample', 'Print samples on STDOUT')
-
   # Print samples periodically on STDOUT.
   #
   # @return [void]
   def sample
     on_sample(options) { container[:sampler].tap(&:call) }
   end
-
-  protected
-
-  # Get container access.
-  #
-  # @return [IrProxy::Container]
-  attr_reader :container
 end
