@@ -31,6 +31,7 @@ class IrProxy::Cli::Command
   desc('pipe', 'React to STDIN events')
   option(:config, type: :string)
   option(:adapter, type: :string)
+  option(:protocol, type: :string)
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
@@ -41,6 +42,7 @@ class IrProxy::Cli::Command
   desc('config', 'Display config')
   option(:config, type: :string)
   option(:adapter, type: :string)
+  option(:protocol, type: :string)
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]

@@ -22,6 +22,7 @@ module IrProxy::Cli::Command::Behavior
   CONFIGURABLE_APPLIABLES = [
     :config,
     :adapter,
+    :protocol,
   ].freeze
 
   protected
@@ -72,5 +73,12 @@ module IrProxy::Cli::Command::Behavior
   # @param [Hash] options
   def apply_adapter(options)
     configure(:adapter, options)
+  end
+
+  # Apply `protocol` option.
+  #
+  # @param [Hash] options
+  def apply_protocol(options)
+    configure(:protocol, options)
   end
 end
