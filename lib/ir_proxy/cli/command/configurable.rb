@@ -39,4 +39,18 @@ module IrProxy::Cli::Command::Configurable
       end
     end
   end
+
+  # Replace given key value on config (from container) with value from options.
+  #
+  # @param [String, Symbol] key
+  # @param [Hash] options
+  #
+  # @return [self]
+  def configure(key, options)
+    self.tap do
+      if options.key?(key.to_sym)
+        with_config(app_config) { |config| config[key.to_sym] = options[key.to_sym] }
+      end
+    end
+  end
 end

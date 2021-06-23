@@ -71,10 +71,6 @@ module IrProxy::Cli::Command::Behavior
   #
   # @param [Hash] options
   def apply_adapter(options)
-    self.tap do
-      if options[:adapter]
-        with_config(app_config) { |config| config[:adapter] = options[:adapter] }
-      end
-    end
+    configure(:adapter, options)
   end
 end
