@@ -14,13 +14,23 @@ module IrProxy::Cli::Command::Behavior
   include(IrProxy::Cli::Command::Configurable)
   include(IrProxy::Cli::Command::Processable)
 
+  # Configurable appliables
+  #
+  # @see #on_start
+  #
+  # @api private
+  CONFIGURABLE_APPLIABLES = [
+    :config,
+    :adapter,
+  ].freeze
+
   protected
 
   # Block surrounding `pipe` command.
   #
   # @param [Hash] options
   def on_pipe(options, &block)
-    on_start(:pipe, options, [:config, :adapter], &block)
+    on_start(:pipe, options, CONFIGURABLE_APPLIABLES, &block)
   end
 
   # Block surrounding `sample` command.
@@ -32,7 +42,7 @@ module IrProxy::Cli::Command::Behavior
 
   # @param [Hash] options
   def on_config(options, &block)
-    on_start(:config, options, [:config, :adapter], &block)
+    on_start(:config, options, CONFIGURABLE_APPLIABLES, &block)
   end
 
   # @param [String, Symbol] command_name
