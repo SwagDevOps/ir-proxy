@@ -27,11 +27,10 @@ end
 # Describe available commands.
 class IrProxy::Cli::Command
   include(Behavior)
+  include(IrProxy::Concern::ContainerAware)
 
   desc('pipe', 'React to STDIN events')
-  option(:config, type: :string)
-  option(:adapter, type: :string)
-  option(:protocol, type: :string)
+  Behavior.apply_on(self)
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]
@@ -40,9 +39,7 @@ class IrProxy::Cli::Command
   end
 
   desc('config', 'Display config')
-  option(:config, type: :string)
-  option(:adapter, type: :string)
-  option(:protocol, type: :string)
+  Behavior.apply_on(self)
   # React to event received through (CLI) given STDIN pipe.
   #
   # @return [void]

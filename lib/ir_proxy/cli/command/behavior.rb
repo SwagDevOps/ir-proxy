@@ -7,31 +7,42 @@
 # There is NO WARRANTY, to the extent permitted by law.
 
 require_relative '../command'
+require_relative './behavior/configurable_appliables'
 
 # Provides command behavior surrounding command execution.
 module IrProxy::Cli::Command::Behavior
-  include(IrProxy::Cli::Command::Eventable)
-  include(IrProxy::Cli::Command::Configurable)
-  include(IrProxy::Cli::Command::Processable)
+  {
+    Appliable: 'appliable',
+    Configurator: 'configurator',
+    Eventer: 'eventer',
+    Process: 'process',
+    CONFIGURABLE_APPLIABLES: 'configurable_appliables'
+  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("behavior/#{fp}")) }
 
-  # Configurable appliables
-  #
-  # @see #on_start
-  #
-  # @api private
-  CONFIGURABLE_APPLIABLES = [
-    :config,
-    :adapter,
-    :protocol,
-  ].freeze
+  class << self
+    # @erturn [Hash{Symbol => Appliable}]
+    def appliables
+      CONFIGURABLE_APPLIABLES.transform_values { |value| Appliable.new(value) }
+    end
+
+    # @param [Class<Thor>] subject
+    def apply_on(subject)
+      self.appliables.each { |k, v| subject.option(k, v.to_h) }
+    end
+  end
 
   protected
+
+  # @param [Hash] options
+  def on_config(options, &block)
+    on_start(:config, options, configurable_appliables.keys, &block)
+  end
 
   # Block surrounding `pipe` command.
   #
   # @param [Hash] options
   def on_pipe(options, &block)
-    on_start(:pipe, options, CONFIGURABLE_APPLIABLES, &block)
+    on_start(:pipe, options, configurable_appliables.keys, &block)
   end
 
   # Block surrounding `sample` command.
@@ -41,44 +52,23 @@ module IrProxy::Cli::Command::Behavior
     on_start(:sample, options, [], &block)
   end
 
-  # @param [Hash] options
-  def on_config(options, &block)
-    on_start(:config, options, CONFIGURABLE_APPLIABLES, &block)
-  end
-
   # @param [String, Symbol] command_name
   # @param [Hash] options
   # @param [Array<String, Symbol>] appliables
   def on_start(command_name, options, appliables = [], &block)
-    appliables.to_a.each { |m| self.__send__("apply_#{m}", options.transform_keys(&:to_sym)) }
+    Configurator.new.tap do |configurator|
+      appliables.to_a.each do |key|
+        configurator.call(options, key: key)
+      end
+    end
 
-    eventable do
-      command_name.to_sym == :pipe ? process { block.call } : block.call
+    Eventer.call do
+      command_name.to_sym == :pipe ? Processer.call { block.call } : block.call
     end
   end
 
-  # Apply `config` option.
-  #
-  # @param [Hash] options
-  def apply_config(options)
-    self.tap do
-      return self unless options[:config]
-
-      IrProxy::Config.new(options[:config]).tap { |config| with_config(config) }
-    end
-  end
-
-  # Apply `adapter` option.
-  #
-  # @param [Hash] options
-  def apply_adapter(options)
-    configure(:adapter, options)
-  end
-
-  # Apply `protocol` option.
-  #
-  # @param [Hash] options
-  def apply_protocol(options)
-    configure(:protocol, options)
+  # @erturn [Hash{Symbol => Appliable}]
+  def configurable_appliables
+    IrProxy::Cli::Command::Behavior.appliables
   end
 end
