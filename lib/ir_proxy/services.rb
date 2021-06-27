@@ -9,6 +9,11 @@
 {
   'adapter.factory': IrProxy::Adapter,
   clock: IrProxy::Clock,
+  inflector: lambda do
+    require 'dry/inflector'
+
+    Dry::Inflector.new
+  end.call.freeze,
   progname: File.dirname(__FILE__).yield_self { |dir| File.basename(dir).gsub('_', '-') },
 }.yield_self do |vars|
   {
