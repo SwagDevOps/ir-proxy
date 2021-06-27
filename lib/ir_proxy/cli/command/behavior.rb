@@ -60,7 +60,7 @@ module IrProxy::Cli::Command::Behavior
     end
   end
 
-  # @@return [Hash{Symbol => Appliable}]
+  # @return [Hash{Symbol => Appliable}]
   def configurable_appliables
     IrProxy::Cli::Command::Behavior.appliables
   end

@@ -16,6 +16,8 @@ class AdapterGuard
   # @param [Hash{Symbol => Object}] options
   #
   # @raise Thor::Error
+  #
+  # @return [Hash{Symbol => Object}]
   def call(key, options)
     options.tap do
       "ERROR: #{key} must be in {#{adapter_factory.keys.map(&:to_s).join('|')}}".yield_self do |message|

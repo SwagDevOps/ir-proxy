@@ -12,7 +12,7 @@ require_relative '../behavior'
 #
 # @see IrProxy::Cli::Command::Behavior.CONFIGURABLE_APPLIABLES
 class IrProxy::Cli::Command::Behavior::Appliables
-  # @param [Hash{Symbol => Hash}]
+  # @param [Hash{Symbol => Hash}] appliables
   def initialize(appliables)
     @items = appliables.map { |key, value| [key, make(value, name: key)] }.to_h.freeze
   end

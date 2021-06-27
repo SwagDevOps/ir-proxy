@@ -12,7 +12,7 @@ require_relative '../behavior'
 module IrProxy::Cli::Command::Behavior::HasAppliables
   # @see IrProxy::Cli::Command::Behavior.CONFIGURABLE_APPLIABLES
   #
-  # @@return [Appliables|Hash{Symbol => Hash}]
+  # @return [Appliables|Hash{Symbol => Hash}]
   def appliables
     self.const_get(:CONFIGURABLE_APPLIABLES).yield_self do |appliables|
       IrProxy::Cli::Command::Behavior::Appliables.new(appliables)
