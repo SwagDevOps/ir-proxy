@@ -33,7 +33,7 @@ class IrProxy::Config
     #
     # @return [Pathname]
     def default_file
-      Pathname.new(XDG['CONFIG_HOME'].to_s).join(container.get(:progname), 'config.yml')
+      Pathname.new(XDG['CONFIG_HOME'].to_s).join(container.fetch(:progname), 'config.yml')
     end
   end
 
