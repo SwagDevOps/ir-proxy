@@ -7,29 +7,21 @@
 # There is NO WARRANTY, to the extent permitted by law.
 
 require_relative '../command'
-require_relative './behavior/configurable_appliables'
 
 # Provides command behavior surrounding command execution.
 module IrProxy::Cli::Command::Behavior
   {
     Appliable: 'appliable',
-    AppliablesLister: 'appliables_lister',
+    Appliables: 'appliables',
     Configurator: 'configurator',
     Eventer: 'eventer',
+    HasAppliables: 'has_appliables',
     Process: 'process',
     CONFIGURABLE_APPLIABLES: 'configurable_appliables'
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("behavior/#{fp}")) }
 
   class << self
-    # @@return [Hash{Symbol => Appliable}]
-    def appliables
-      AppliablesLister.new(CONFIGURABLE_APPLIABLES).to_h
-    end
-
-    # @param [Class<Thor>] subject
-    def apply_on(subject)
-      self.appliables.each { |k, v| subject.option(k, v.to_h) }
-    end
+    include(HasAppliables)
   end
 
   protected

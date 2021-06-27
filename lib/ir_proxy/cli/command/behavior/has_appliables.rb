@@ -8,23 +8,17 @@
 
 require_relative '../behavior'
 
-# List appliable options related to config.
-#
 # @see IrProxy::Cli::Command::Behavior.CONFIGURABLE_APPLIABLES
-class IrProxy::Cli::Command::Behavior::AppliablesLister
-  def initialize(appliables)
-    @items = appliables.map { |key, value| [key, make_appliable(value, name: key)] }.to_h.freeze
+module IrProxy::Cli::Command::Behavior::HasAppliables
+  # @@return [Appliables|Hash{Symbol => Hash}]
+  def appliables
+    self.const_get(:CONFIGURABLE_APPLIABLES).yield_self do |appliables|
+      IrProxy::Cli::Command::Behavior::Appliables.new(appliables)
+    end
   end
 
-  def to_h
-    items.dup
-  end
-
-  protected
-
-  attr_reader :items
-
-  def make_appliable(value, name:)
-    IrProxy::Cli::Command::Behavior::Appliable.new(value, name: name)
+  # @param [Class<Thor>] subject
+  def apply_on(subject)
+    self.appliables.each { |k, v| subject.option(k, v.to_h) }
   end
 end
