@@ -80,7 +80,7 @@ sudo systemctl enable ir-proxy.service
 ## Sample keymap
 
 ```xml
-<!-- ~/.kodi/userdata/keymaps/mce-vista.xml -->
+<!-- ~/.kodi/userdata/keymaps/ir-proxy.xml -->
 <keymap>
   <global>
     <keyboard>
@@ -91,10 +91,10 @@ sudo systemctl enable ir-proxy.service
 </keymap>
 ```
 
-## Extract available keys
+## Extract available keys to a YAML syntax
 
 ```sh
-grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | tr -d '"' | sort | perl -pe 's/^KEY_//' | sort -u | perl -pe 's/^(.*)$/  \1:/g'
+grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | perl -pe 's/\s+=\s+/: /g' | perl -pe 's/:\s+"KEY_/: "/'
 ```
 
 ## Resources
