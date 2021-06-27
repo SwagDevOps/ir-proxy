@@ -10,8 +10,6 @@ require_relative '../configurator'
 
 # Guard for repeat_delay option.
 class RepeatDelayGuard
-  include IrProxy::Concern::ContainerAware
-
   # @param [Symbol] key
   # @param [Hash{Symbol => Object}] options
   #
