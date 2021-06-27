@@ -56,6 +56,8 @@ class IrProxy::Container
 
   alias [] get
 
+  alias fetch get
+
   # @return [Boolean]
   def has?(id)
     keys.include?(id.to_sym)
@@ -93,7 +95,7 @@ class IrProxy::Container
   end
 
   # No entry was found in the container.
-  class NotFoundError < Error
+  class NotFoundError < KeyError
     attr_reader :key
 
     # Initialize error with given key.
