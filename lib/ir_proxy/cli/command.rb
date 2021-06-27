@@ -21,6 +21,12 @@ class IrProxy::Cli
       Eventable: 'eventable',
       Processable: 'processable',
     }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("command/#{fp}")) }
+
+    class << self
+      def exit_on_failure?
+        true
+      end
+    end
   end
 end
 

@@ -13,11 +13,9 @@ require 'sys/proc'
 #
 # Mostly an entry-point for CLI.
 class IrProxy::Cli
-  # @formatter:off
   {
     Command: 'command',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("cli/#{fp}")) }
-  # @formatter:on
 
   def initialize(**kwargs)
     @progname = (kwargs[:progname] || IrProxy['progname']).freeze
