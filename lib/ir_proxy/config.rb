@@ -40,7 +40,7 @@ class IrProxy::Config
   # @param [String. nil] file
   def initialize(file, **options)
     @loaded = nil
-    @file = file.freeze
+    @file = Pathname.new(file || self.default_file).freeze
     @options = options.freeze
   end
 
