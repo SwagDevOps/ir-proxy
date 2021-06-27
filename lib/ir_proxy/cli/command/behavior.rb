@@ -13,6 +13,7 @@ require_relative './behavior/configurable_appliables'
 module IrProxy::Cli::Command::Behavior
   {
     Appliable: 'appliable',
+    AppliablesLister: 'appliables_lister',
     Configurator: 'configurator',
     Eventer: 'eventer',
     Process: 'process',
@@ -22,7 +23,7 @@ module IrProxy::Cli::Command::Behavior
   class << self
     # @@return [Hash{Symbol => Appliable}]
     def appliables
-      CONFIGURABLE_APPLIABLES.transform_values { |value| Appliable.new(value) }
+      AppliablesLister.new(CONFIGURABLE_APPLIABLES).to_h
     end
 
     # @param [Class<Thor>] subject

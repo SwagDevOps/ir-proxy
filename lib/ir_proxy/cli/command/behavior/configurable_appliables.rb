@@ -17,12 +17,20 @@ module IrProxy::Cli::Command::Behavior
   CONFIGURABLE_APPLIABLES = {
     config: {
       type: :string,
+      desc: 'path to config file',
+      default: IrProxy::Config.default_file,
     },
     adapter: {
-      type: :string
+      type: :string,
+      desc: 'name of the adapater'
     },
     protocol: {
       type: :string,
+      desc: 'name of the protocol',
+    },
+    logger: {
+      type: :boolean,
+      desc: 'enable logger',
     }
   }.freeze
 end
