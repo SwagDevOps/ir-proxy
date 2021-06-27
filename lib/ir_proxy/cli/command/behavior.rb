@@ -20,7 +20,7 @@ module IrProxy::Cli::Command::Behavior
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("behavior/#{fp}")) }
 
   class << self
-    # @erturn [Hash{Symbol => Appliable}]
+    # @@return [Hash{Symbol => Appliable}]
     def appliables
       CONFIGURABLE_APPLIABLES.transform_values { |value| Appliable.new(value) }
     end
@@ -67,7 +67,7 @@ module IrProxy::Cli::Command::Behavior
     end
   end
 
-  # @erturn [Hash{Symbol => Appliable}]
+  # @@return [Hash{Symbol => Appliable}]
   def configurable_appliables
     IrProxy::Cli::Command::Behavior.appliables
   end
