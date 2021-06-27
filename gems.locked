@@ -112,6 +112,7 @@ PLATFORMS
 DEPENDENCIES
   chrono_logger (~> 1.1)
   concurrent-ruby (~> 1.1)
+  dry-inflector (~> 0.2)
   github-markup (~> 3.0)
   interesting_methods (~> 0.1)
   kamaze-project!
