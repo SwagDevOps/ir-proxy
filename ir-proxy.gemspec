@@ -39,6 +39,8 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/cli/command/behavior/appliables.rb",
     "lib/ir_proxy/cli/command/behavior/configurable_appliables.rb",
     "lib/ir_proxy/cli/command/behavior/configurator.rb",
+    "lib/ir_proxy/cli/command/behavior/configurator/adapter_guard.rb",
+    "lib/ir_proxy/cli/command/behavior/configurator/repeat_delay_guard.rb",
     "lib/ir_proxy/cli/command/behavior/eventer.rb",
     "lib/ir_proxy/cli/command/behavior/has_appliables.rb",
     "lib/ir_proxy/cli/command/behavior/processer.rb",
@@ -81,6 +83,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency("chrono_logger", ["~> 1.1"])
   s.add_runtime_dependency("concurrent-ruby", ["~> 1.1"])
+  s.add_runtime_dependency("dry-inflector", ["~> 0.2"])
   s.add_runtime_dependency("kamaze-version", ["~> 1.0"])
   s.add_runtime_dependency("rouge", ["~> 3.26"])
   s.add_runtime_dependency("stibium-bundled", ["~> 0.0.1", ">= 0.0.4"])
