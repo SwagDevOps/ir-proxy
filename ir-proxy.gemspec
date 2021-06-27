@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/cli/command.rb",
     "lib/ir_proxy/cli/command/behavior.rb",
     "lib/ir_proxy/cli/command/behavior/appliable.rb",
+    "lib/ir_proxy/cli/command/behavior/appliables_lister.rb",
     "lib/ir_proxy/cli/command/behavior/configurable_appliables.rb",
     "lib/ir_proxy/cli/command/behavior/configurator.rb",
     "lib/ir_proxy/cli/command/behavior/eventer.rb",
