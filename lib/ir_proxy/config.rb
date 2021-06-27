@@ -19,22 +19,56 @@ class IrProxy::Config
     File: 'file',
   }.each { |s, fp| autoload(s, "#{__dir__}/config/#{fp}") }
 
-  # @param [String. nil] file
-  def initialize(file = nil, **options)
-    @progname = options[:progname] || IrProxy[:progname]
-    @file = file
-    @loaded = nil
-    @options = options
+  class << self
+    include IrProxy::Concern::ContainerAware
+
+    # Get default config values.
+    #
+    # @return [Hash{Symbol => Object}]
+    def defaults
+      Defaults.to_h
+    end
+
+    # Get path to default config file.
+    #
+    # @return [Pathname]
+    def default_file
+      Pathname.new(XDG['CONFIG_HOME'].to_s).join(container.get(:progname), 'config.yml')
+    end
   end
 
-  # @return [String]
-  attr_reader :progname
+  # @param [String. nil] file
+  def initialize(file, **options)
+    @loaded = nil
+    @file = file.freeze
+    @options = options.freeze
+  end
+
+  # Denote current used file is the default file.
+  #
+  # @return [Boolean]
+  def default_file?
+    @file.to_s == default_file.to_s
+  end
+
+  # Get options used to read file.
+  #
+  # @return [Hash]
+  def options
+    # noinspection RubyYardReturnMatch
+    {
+      true => { optional: true }.dup.merge(@options),
+      false => @options,
+    }.fetch((default_file? and !Pathname(@file).exist?))
+  end
 
   # @return [IrProxy::Config::File]
   def file
-    IrProxy::Config::File.new(@file || default_file, **@options)
+    IrProxy::Config::File.new(@file, **options)
   end
 
+  # Get path to the config directory.
+  #
   # @return [Pathname]
   def path
     Pathname.new(self.file).dirname.expand_path
@@ -54,7 +88,7 @@ class IrProxy::Config
 
   # @return [Hash]
   def to_h
-    Defaults.to_h.merge(self.loaded.clone)
+    self.class.defaults.to_h.merge(self.loaded.clone)
   end
 
   # Get a string representation for config (compatible).
@@ -110,6 +144,6 @@ class IrProxy::Config
 
   # @return [Pathname]
   def default_file
-    Pathname.new(XDG['CONFIG_HOME'].to_s).join(progname, 'config.yml')
+    self.class.default_file
   end
 end
