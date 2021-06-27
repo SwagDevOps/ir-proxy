@@ -31,6 +31,10 @@ module IrProxy::Cli::Command::Behavior
     logger: {
       type: :boolean,
       desc: 'enable logger',
-    }
+    },
+    repeat_delay: {
+      type: :numeric,
+      desc: 'keypress repetition interval (seconds)',
+    },
   }.freeze
 end
