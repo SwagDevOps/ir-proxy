@@ -10,6 +10,8 @@ require_relative '../behavior'
 
 # @see IrProxy::Cli::Command::Behavior.CONFIGURABLE_APPLIABLES
 module IrProxy::Cli::Command::Behavior::HasAppliables
+  # @see IrProxy::Cli::Command::Behavior.CONFIGURABLE_APPLIABLES
+  #
   # @@return [Appliables|Hash{Symbol => Hash}]
   def appliables
     self.const_get(:CONFIGURABLE_APPLIABLES).yield_self do |appliables|
@@ -18,7 +20,11 @@ module IrProxy::Cli::Command::Behavior::HasAppliables
   end
 
   # @param [Class<Thor>] subject
+  #
+  # @return [self]
   def apply_on(subject)
-    self.appliables.each { |k, v| subject.option(k, v.to_h) }
+    self.tap do
+      self.appliables.each { |k, v| subject.option(k, v.to_h) }
+    end
   end
 end
