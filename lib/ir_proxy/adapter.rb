@@ -29,6 +29,18 @@ class IrProxy::Adapter
       end.yield_self { |k| self.fetch(k) }
     end
 
+    # Denote given key is available.
+    #
+    # @return [Boolean]
+    def has?(key)
+      self.keys.include?(key.to_sym)
+    end
+
+    # @return [Array<Symbol>]
+    def keys
+      self.adapters.keys.sort
+    end
+
     protected
 
     def [](key)
