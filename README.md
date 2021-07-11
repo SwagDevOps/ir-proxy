@@ -10,13 +10,13 @@
 as a result, [configuration][file:config] file is located:
 
 ```sh
-${XDG_CONFIG_HOME:-~/home/.config}/ir-proxy/config.yml
+${XDG_CONFIG_HOME:-~/.config}/ir-proxy/config.yml
 ```
 
 ## Sample commands
 
 ```sh
-sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u user ir-proxy pipe
+sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe
 ```
 
 ```sh
@@ -70,7 +70,7 @@ export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
 (socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | \
-    sudo -nEu "${X_USER}" ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
+    sudo -nEu "${X_USER}" -- ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
 ```sh
@@ -84,8 +84,8 @@ sudo systemctl enable ir-proxy.service
 <keymap>
   <global>
     <keyboard>
-     <power>ShutDown()</power>
-     <f12>ActivateWindow(Home)</f12>
+      <f12>ActivateWindow(Home)</f12>
+      <power>ShutDown()</power>
     </keyboard>
   </global>
 </keymap>
@@ -102,19 +102,24 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | perl -pe 's/\s+=\s+/: /g' 
 * [ir-keytable on the Orange Pi Zero](https://www.sigmdel.ca/michel/ha/opi/ir_03_en.html)
 * [List of Keysyms Recognised by Xmodmap](http://wiki.linuxquestions.org/wiki/List_of_Keysyms_Recognised_by_Xmodmap)
 * [XF86 keyboard symbols](http://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols)
-* [Keyboard controls - Official Kodi Wiki](https://kodi.wiki/view/Keyboard_controls)
+* [Keyboard controls - Official Kodi Wiki][kodi.wiki/keyboard_controls]
 * [Remote controller tables — The Linux Kernel documentation](https://www.kernel.org/doc/html/v4.14/media/uapi/rc/rc-tables.html)
 * [xdotool | Linux man page](http://linuxcommandlibrary.com/man/xdotool.html)
 * [xbmc-system/keymaps/keyboard.xml][xbmc/system/keymaps/keyboard]
 * [xdotool list of key codes][wikis/xdotool-list-of-key-codes]
 * [XF86 keyboard symbols][wikis/XF86_keyboard_symbols]
+* [List of built-in functions - Official Kodi Wiki][kodi.wiki/built-in_functions]
+* [Window IDs - Official Kodi Wiki][kodi.wiki/window_IDs]
 
 <!-- hyeprlinks -->
 
-[file:config]: ./config.sample.yml
+[file:config]: ./samples/config/config.yml
 [wikipedia:pipeline]: https://en.wikipedia.org/wiki/Pipeline_(Unix)
 [wikipedia:xorg]: https://en.wikipedia.org/wiki/X.Org_Server
 [freedesktop:basedir-spec]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 [xbmc/system/keymaps/keyboard]: https://fossies.org/linux/xbmc/system/keymaps/keyboard.xml
 [wikis/xdotool-list-of-key-codes]: https://gitlab.com/cunidev/gestures/-/wikis/xdotool-list-of-key-codes
 [wikis/XF86_keyboard_symbols]: https://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols
+[kodi.wiki/keyboard_controls]: https://kodi.wiki/view/Keyboard_controls
+[kodi.wiki/built-in_functions]: https://kodi.wiki/view/List_of_built-in_functions
+[kodi.wiki/window_IDs]: https://kodi.wiki/view/Window_IDs
