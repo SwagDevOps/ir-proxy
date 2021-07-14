@@ -20,11 +20,20 @@ class IrProxy::Cli
       ContainerAware: 'container_aware',
       Eventable: 'eventable',
       Processable: 'processable',
-    }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("command/#{fp}")) }
+    }.each { |s, fp| autoload(s, "#{__dir__}/command/#{fp}") }
+
+    # @api private
+    DESCRIPTIONS = [__FILE__.gsub(/.rb$/, ''), 'descriptions.rb'].join('/').yield_self do |fp|
+      instance_eval(File.read(fp), fp, 1).freeze
+    end
 
     class << self
       def exit_on_failure?
         true
+      end
+
+      def desc(usage, options: {})
+        super(usage.to_s, self.const_get(:DESCRIPTIONS).fetch(usage.to_sym), options.to_h)
       end
     end
   end
@@ -35,7 +44,7 @@ class IrProxy::Cli::Command
   include(Behavior)
   include(IrProxy::Concern::ContainerAware)
 
-  desc('pipe', 'React to STDIN events')
+  desc(:pipe)
   Behavior.apply_on(self)
   # React to event received through (CLI) given STDIN pipe.
   #
@@ -44,7 +53,7 @@ class IrProxy::Cli::Command
     on_pipe(options) { IrProxy::Pipe.new.tap(&:call) }
   end
 
-  desc('config', 'Display config')
+  desc(:config)
   Behavior.apply_on(self)
   # React to event received through (CLI) given STDIN pipe.
   #
@@ -57,7 +66,7 @@ class IrProxy::Cli::Command
     end
   end
 
-  desc('sample', 'Print samples on STDOUT')
+  desc(:sample)
   # Print samples periodically on STDOUT.
   #
   # @return [void]
