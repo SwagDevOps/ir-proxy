@@ -22,7 +22,7 @@ module IrProxy::Cli::Command::Behavior
     },
     adapter: {
       type: :string,
-      desc: 'name of the adapater'
+      desc: 'name of the adapter'
     },
     protocol: {
       type: :string,
