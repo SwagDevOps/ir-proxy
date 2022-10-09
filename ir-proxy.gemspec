@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/cli/command/behavior/eventer.rb",
     "lib/ir_proxy/cli/command/behavior/has_appliables.rb",
     "lib/ir_proxy/cli/command/behavior/processer.rb",
+    "lib/ir_proxy/cli/command/descriptions.rb",
     "lib/ir_proxy/clock.rb",
     "lib/ir_proxy/concern.rb",
     "lib/ir_proxy/concern/container_aware.rb",
