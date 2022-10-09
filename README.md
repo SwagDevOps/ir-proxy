@@ -3,14 +3,23 @@
 # Proxy for ``ir-keytable``
 
 ``ir-proxy`` can be used on a [pipeline][wikipedia:pipeline] to process
-``ir-keytable`` output and propagate key events. It uses adapters
-(``xdotool``) to send key events to the [display server][wikipedia:xorg].
-
-``ir-proxy`` conforms to [XDG Base Directory][freedesktop:basedir-spec],
-as a result, [configuration][file:config] file is located:
+``ir-keytable`` output and propagate key events.
+``ir-proxy`` uses adapters (``xdotool``) to send key events to the [display server][wikipedia:xorg].
+``ir-proxy`` conforms to the [XDG Base Directory][freedesktop:basedir-spec].
+As a result, [configuration file][file:config] file is located:
 
 ```sh
 ${XDG_CONFIG_HOME:-~/.config}/ir-proxy/config.yml
+```
+
+## Synopsys
+
+```
+Commands:
+  ir-proxy config          # Display config
+  ir-proxy help [COMMAND]  # Describe available commands or one specific command
+  ir-proxy pipe            # React to STDIN events
+  ir-proxy sample          # Print samples on STDOUT
 ```
 
 ## Sample commands
@@ -23,11 +32,17 @@ sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe
 sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe --config /etc/ir-proxy/config.yml
 ```
 
-### Testing 
+### Testing
 
 ```sh
 bundle install --standalone
 sudo socat - EXEC:'ir-keytable -tc',pty | ruby bin/ir-proxy pipe --config config.sample.yml
+```
+
+## Install "production" only
+
+```shell
+bundle install --standalone --without development test doc repl
 ```
 
 ## Sample ``systemd`` service
@@ -114,12 +129,21 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | perl -pe 's/\s+=\s+/: /g' 
 <!-- hyeprlinks -->
 
 [file:config]: ./samples/config/config.yml
+
 [wikipedia:pipeline]: https://en.wikipedia.org/wiki/Pipeline_(Unix)
+
 [wikipedia:xorg]: https://en.wikipedia.org/wiki/X.Org_Server
+
 [freedesktop:basedir-spec]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
 [xbmc/system/keymaps/keyboard]: https://fossies.org/linux/xbmc/system/keymaps/keyboard.xml
+
 [wikis/xdotool-list-of-key-codes]: https://gitlab.com/cunidev/gestures/-/wikis/xdotool-list-of-key-codes
+
 [wikis/XF86_keyboard_symbols]: https://wiki.linuxquestions.org/wiki/XF86_keyboard_symbols
+
 [kodi.wiki/keyboard_controls]: https://kodi.wiki/view/Keyboard_controls
+
 [kodi.wiki/built-in_functions]: https://kodi.wiki/view/List_of_built-in_functions
+
 [kodi.wiki/window_IDs]: https://kodi.wiki/view/Window_IDs
