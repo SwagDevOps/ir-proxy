@@ -16,7 +16,7 @@ module IrProxy::Cli::Command::Behavior
     Configurator: 'configurator',
     Eventer: 'eventer',
     HasAppliables: 'has_appliables',
-    Process: 'process',
+    Processer: 'processer',
     CONFIGURABLE_APPLIABLES: 'configurable_appliables'
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("behavior/#{fp}")) }
 
