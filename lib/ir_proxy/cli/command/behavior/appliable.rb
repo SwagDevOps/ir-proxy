@@ -38,12 +38,15 @@ class IrProxy::Cli::Command::Behavior::Appliable
     struct.to_h.each do |key, value|
       self.singleton_class.__send__(:define_method, key) { value }
     end
-    struct.to_h.keys # .tap { yield(self) if block }
+    struct.to_h.keys
   end
 
   def refine(definition)
-    {
-      default: IrProxy::Config.defaults[name],
-    }.merge(definition)
+    definition.tap do
+      if ::IrProxy::Config.defaults.key?(name)
+        # if default is set from the command line, it will override config.
+        definition.delete(:default)
+      end
+    end
   end
 end
