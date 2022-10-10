@@ -18,8 +18,8 @@ module IrProxy::KeyScan::Throttleable
   def throttleable?(other)
     return false unless other.is_a?(self.class)
 
-    [self, other].map { |v| v.__send__(:throttleable) }.uniq.yield_self do |compared|
-      1 == compared.size
+    [self, other].map { |v| v.__send__(:throttleable) }.then do |comparables|
+      comparables[0].map { |k, v| comparables[1][k].eql?(v) }.uniq == [true]
     end
   end
 
