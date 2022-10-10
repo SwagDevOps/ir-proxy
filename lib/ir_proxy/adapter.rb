@@ -25,8 +25,12 @@ class IrProxy::Adapter
     # @return [IrProxy::Adapter::Adapter]
     def instance(**kwargs)
       (kwargs[:config] || IrProxy[:config]).to_h.yield_self do |config|
-        config.fetch(:adapter, nil)&.to_sym
-      end.yield_self { |k| self.fetch(k) }
+        lambda do
+          config.fetch(:adapter, nil).tap do |v|
+            return v.transform_keys(&:to_sym)[:name] if v.is_a?(Hash)
+          end
+        end.call
+      end.yield_self { |name| self.fetch(name&.to_sym) }
     end
 
     # Denote given key is available.
