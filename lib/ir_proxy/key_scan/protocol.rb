@@ -17,6 +17,10 @@ class IrProxy::KeyScan::Protocol
     @values = [forced, original].compact.uniq.map(&:to_sym).freeze
   end
 
+  def eql?(other)
+    other.class == self.class ? self.values == other.values : false
+  end
+
   def forced?
     self.to_a.size > 1
   end
