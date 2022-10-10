@@ -34,7 +34,7 @@ scancode\s*=\s*(?<scancode>0[xX][0-9a-fA-F]+)\s*
   #
   # @see #throttleable
   # @see #throttleable?
-  THROTTLEABLE_KEYS = [:protocol, :scancode, :toggle].freeze
+  THROTTLEABLE_KEYS = [:protocol, :scancode].freeze
 
   {
     Protocol: 'protocol',
