@@ -6,7 +6,7 @@
 Gem::Specification.new do |s|
   s.name        = "ir-proxy"
   s.version     = "2.0.0"
-  s.date        = "2020-07-01"
+  s.date        = "2022-10-11"
   s.summary     = "Proxy for ir-keytable"
   s.description = "A simple proxy propagating event seen through ir-keytable"
 
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.email       = "dimitri@arrigoni.me"
   s.homepage    = "https://github.com/SwagDevOps/ir-proxy"
 
-  s.required_ruby_version = ">= 2.5.0"
+  s.required_ruby_version = ">= 2.6.0"
   s.require_paths = ["lib"]
   s.bindir        = "bin"
   s.executables   = [
