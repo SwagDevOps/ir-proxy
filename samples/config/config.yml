@@ -1,0 +1,8 @@
+---
+protocol: rc6_0
+logger: true
+adapter: dummy
+repeat_delay: 0.2
+# To import files, use the imports key
+# and use either a relative or absolute path to the imported files
+imports: { adapters: 'config/adapters.yml' }

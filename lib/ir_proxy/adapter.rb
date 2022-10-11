@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -12,24 +12,37 @@ require_relative '../ir_proxy'
 #
 # Act as a factory, where target is implicit and based on ``config``.
 class IrProxy::Adapter
-  # @formatter:off
   {
     Adapter: 'adapter',
     Dummy: 'dummy',
+    HasLogger: 'has_logger',
     Xdotool: 'xdotool',
   }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("adapter/#{fp}")) }
-  # @formatter:on
 
   class << self
     # Get an instance of adapter.
     #
     # @return [IrProxy::Adapter::Adapter]
     def instance(**kwargs)
-      (kwargs[:config] || IrProxy[:config]).to_h.tap do |config|
-        config.fetch(:adapter, {}).fetch('name', 'xdotool').to_sym.tap do |k|
-          return self.fetch(k)
-        end
-      end
+      (kwargs[:config] || IrProxy[:config]).to_h.yield_self do |config|
+        lambda do
+          config.fetch(:adapter, nil).tap do |v|
+            return v.transform_keys(&:to_sym)[:name] if v.is_a?(Hash)
+          end
+        end.call
+      end.yield_self { |name| self.fetch(name&.to_sym) }
+    end
+
+    # Denote given key is available.
+    #
+    # @return [Boolean]
+    def has?(key)
+      self.keys.include?(key.to_sym)
+    end
+
+    # @return [Array<Symbol>]
+    def keys
+      self.adapters.keys.sort
     end
 
     protected
@@ -42,14 +55,12 @@ class IrProxy::Adapter
       adapters.fetch(*args)
     end
 
-    # Find listeners from container.
+    # Retrieve adapters stored on container.
     #
-    # @return [Hash{Symbol => Listener|Object}]
+    # @return [Hash{Symbol => IrProxy::Adapter::Adapter}]
     def adapters
-      IrProxy.container.keys.map do |id|
-        if /^adapters:/ =~ id.to_s
-          [id.to_s.gsub(/^adapters:/, '').to_sym, IrProxy[id]]
-        end
+      IrProxy.container.keys.sort.map do |id|
+        /^adapters:/.yield_self { |reg| [id.to_s.gsub(reg, '').to_sym, IrProxy[id]] if reg =~ id.to_s }
       end.compact.to_h
     end
   end

@@ -1,0 +1,12 @@
+---
+x-defaults: &defaults
+  dump: true
+  logger: true # default: true
+# adapters -------------------------------------------------------------
+dummy:
+  keymap: 'config/keymap.yml'
+  <<: *defaults
+xdotool:
+  keymap: 'config/keymap.yml'
+  options: ["--clearmodifiers"]
+  <<: *defaults

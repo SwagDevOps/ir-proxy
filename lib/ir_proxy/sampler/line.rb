@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -15,15 +15,26 @@
 # ```
 class IrProxy::Sampler::Line
   autoload(:ERB, 'erb')
-  autoload(:OpenStruct, 'ostruct')
 
   def initialize(template, **variables)
-    @template = ERB.new(template)
-    @context = OpenStruct.new(**variables)
+    self.tap do
+      @template = ERB.new(template)
+      @context = Struct.new(*variables.keys).new(*variables.values).freeze
+    end.freeze
   end
 
   # @return [String]
   def result
-    @template.result(@context.instance_eval { binding })
+    template.result(context.instance_eval { binding })
   end
+
+  alias to_s result
+
+  protected
+
+  # @return [ERB]
+  attr_reader :template
+
+  # @return [Struct]
+  attr_reader :context
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -45,16 +45,20 @@ class IrProxy::Sampler
 
   def output(lines, interval = 0.5)
     lines.each do |line|
-      Time.now.tap do |time|
+      now.tap do |time|
         { time: time, timestamp: '%0.6f' % time.to_f }.tap do |vars|
-          line = Line.new("<%= timestamp %>: #{line}", **vars).result
+          Line.new("<%= timestamp %>: #{line}", **vars).tap { |output| $stdout.puts(output) }
 
-          $stdout.puts(line)
           $stdout.flush
         end
       end
     end
     sleep(interval)
+  end
+
+  # @return [Float]
+  def now
+    Process.clock_gettime(IrProxy::Clock::TYPE).to_f
   end
 
   # @return {Symbol => Array<String>}

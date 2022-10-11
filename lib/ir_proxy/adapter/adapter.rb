@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -10,39 +10,40 @@ require_relative '../adapter'
 
 # Base adapter to perform keyboard input.
 #
+# Config is based on the adapter identifier (name).
+# As a result, adapdter does not store a gliobal config object,
+# but the necessary subset extracted from the global config.
+#
 # @abstract
 class IrProxy::Adapter::Adapter
-  # @return [String]
-  attr_reader :executable
+  include(IrProxy::Adapter::HasLogger)
 
   # @return [String]
   attr_reader :name
 
   def initialize(**kwargs)
-    @executable = kwargs[:executbale] || self.class.executable
-    @config = kwargs[:config]
-    @name = self.class.identifier
-    (kwargs[:process_manager] || IrProxy[:process_manager]).tap do |pm|
-      @process_manager = pm
-    end
+    self.tap do
+      @name = self.class.identifier
+      @config = kwargs[:config] || IrProxy[:config].to_h.fetch(:adapters, {}).fetch(self.name.to_s, {})
+      @logger = kwargs[:logger] || IrProxy[:logger]
+      @process_manager = kwargs[:process_manager] || IrProxy[:process_manager]
+    end.freeze
   end
 
   def dummy?
     name == :dummy
   end
 
-  # Get adapter config.
-  #
-  # @return [Hash]
-  def adapter_config
-    config[:adapter] || {}
+  # @return [String]
+  def executable
+    config.fetch('executable', self.class.executable)
   end
 
   # Get keymap from config
   #
   # @return [Hash]
   def keymap
-    (config[:keymap] || {})
+    config.fetch('keymap', {}).freeze
   end
 
   # Get mapping for given key name.
@@ -72,7 +73,7 @@ class IrProxy::Adapter::Adapter
     #
     # @return [String]
     def identifier
-      Dry::Inflector.new.tap do |inf|
+      Dry::Inflector.new.yield_self do |inf|
         self.name.split('::')[-1].tap do |name|
           return inf.underscore(name).to_sym
         end
@@ -82,11 +83,11 @@ class IrProxy::Adapter::Adapter
 
   # Get a command line for given key name.
   #
-  # @todo actual implementation
+  # @param [String] key_name
   #
-  # @return [Array<String>]
+  # @return [Array<String>, nil]
   def command_for(key_name)
-    trans(key_name).tap do |input|
+    trans(key_name).yield_self do |input|
       return nil if input.nil?
 
       return [input.to_s]
@@ -95,15 +96,23 @@ class IrProxy::Adapter::Adapter
 
   protected
 
+  # @return [IrPoxy::Config]
+  attr_reader :config
+
   # @return [IrProxy::ProcessManager]
   attr_reader :process_manager
 
-  # @return [IrPoxy::Config]
-  def config
-    @config ||= IrProxy[:config]
+  def logger
+    super if !!config.fetch('logger', true)
   end
 
   class << self
-    attr_accessor :executable
+    # @return [String]
+    attr_reader :executable
+
+    protected
+
+    # @type [String]
+    attr_writer :executable
   end
 end

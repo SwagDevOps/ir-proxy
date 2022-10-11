@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -10,13 +10,32 @@ require_relative '../command'
 
 # Provides command behavior surrounding command execution.
 module IrProxy::Cli::Command::Behavior
+  {
+    Appliable: 'appliable',
+    Appliables: 'appliables',
+    Configurator: 'configurator',
+    Eventer: 'eventer',
+    HasAppliables: 'has_appliables',
+    Processer: 'processer',
+    CONFIGURABLE_APPLIABLES: 'configurable_appliables'
+  }.each { |s, fp| autoload(s, Pathname.new(__dir__).join("behavior/#{fp}")) }
+
+  class << self
+    include(HasAppliables)
+  end
+
   protected
+
+  # @param [Hash] options
+  def on_config(options, &block)
+    on_start(:config, options, configurable_appliables.keys, &block)
+  end
 
   # Block surrounding `pipe` command.
   #
   # @param [Hash] options
   def on_pipe(options, &block)
-    on_start(:pipe, options, [:config, :adapter], &block)
+    on_start(:pipe, options, configurable_appliables.keys, &block)
   end
 
   # Block surrounding `sample` command.
@@ -26,57 +45,23 @@ module IrProxy::Cli::Command::Behavior
     on_start(:sample, options, [], &block)
   end
 
-  # @param [String] command_name
+  # @param [String, Symbol] command_name
   # @param [Hash] options
-  # @param [Array<String|Symbol>] appliables
+  # @param [Array<String, Symbol>] appliables
   def on_start(command_name, options, appliables = [], &block)
-    appliables.to_a.each { |m| self.__send__("apply_#{m}", options) }
+    Configurator.new.tap do |configurator|
+      appliables.to_a.each do |key|
+        configurator.call(options, key: key)
+      end
+    end
 
-    [:config].each { |k| IrProxy[k].freeze }
-
-    if command_name.to_sym == :pipe
-      process { block.call }
-    else
-      block.call
+    Eventer.call do
+      command_name.to_sym == :pipe ? Processer.call { block.call } : block.call
     end
   end
 
-  # Apply `config` option.
-  #
-  # @param [Hash] options
-  def apply_config(options)
-    self.tap do
-      if options[:config]
-        IrProxy::Config.new(options[:config]).tap do |config|
-          IrProxy.container.set(:config, config)
-        end
-      end
-    end
-  end
-
-  # Apply `adapter` option.
-  #
-  # @param [Hash] options
-  def apply_adapter(options)
-    self.tap do
-      if options[:adapter]
-        IrProxy[:config][:adapter] = { 'name' => options[:adapter] }
-      end
-    end
-  end
-
-  # Execute given block surrounded by proces manager.
-  #
-  # @return [void]
-  def process(&block)
-    0.tap do |status|
-      IrProxy[:process_manager].handle(managed: true) do |manager|
-        block.call
-      rescue SystemExit => e
-        status = e.status
-      ensure
-        manager.terminate(status)
-      end
-    end
+  # @return [Hash{Symbol => Appliable}]
+  def configurable_appliables
+    IrProxy::Cli::Command::Behavior.appliables
   end
 end

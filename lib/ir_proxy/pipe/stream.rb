@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -15,10 +15,7 @@ class IrProxy::Pipe::Stream
   def initialize(io, io_mode = nil)
     @io = io
     @buffer = []
-    # @formatter:off
-    (io_mode || Fcntl::O_NDELAY | Fcntl::O_NONBLOCK | Fcntl::O_RDONLY)
-      .tap { |v| @io_mode = v }
-    # @formatter:on
+    @io_mode = io_mode || (Fcntl::O_NDELAY | Fcntl::O_NONBLOCK | Fcntl::O_RDONLY)
   end
 
   def listen
@@ -40,7 +37,7 @@ class IrProxy::Pipe::Stream
   #
   # @return [String]
   def line
-    buffer.join('').chomp.tap { buffer.clear }
+    buffer.join.chomp.tap { buffer.clear }
   end
 
   # @return [IO]

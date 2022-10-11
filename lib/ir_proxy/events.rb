@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -10,14 +10,13 @@ require_relative '../ir_proxy'
 
 # Almost namespace for listeners
 module IrProxy::Events
-  # @formatter:off
   {
     Dispatcher: 'dispatcher',
+    HasLogger: 'has_logger',
     Listener: 'listener',
     LineIncoming: 'line_incoming',
-    KeyDown: 'key_down',
+    KeyScan: 'key_scan',
   }.each { |s, fp| autoload(s, "#{__dir__}/events/#{fp}") }
-  # @formatter:on
 
   class << self
     def register

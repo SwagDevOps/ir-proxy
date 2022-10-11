@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -18,11 +18,12 @@ class IrProxy::Events::LineIncoming < IrProxy::Events::Listener
   # @param [String] line
   #
   # @see IrProxy::Events::KeyDown#call
+  # @see IrProxy::KeyScan.call
+  #
+  # @return Hash keyscan
   def call(line)
     scan(line).tap do |event|
-      unless event.empty?
-        events_dispatcher.dispatch(:"key.#{event.type}", event)
-      end
+      events_dispatcher.dispatch(:key_scan, event) unless event.empty?
     end
   end
 

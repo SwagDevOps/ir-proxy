@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright (C) 2017-2019 Dimitri Arrigoni <dimitri@arrigoni.me>
+# Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
 # License GPLv3+: GNU GPL version 3 or later
 # <http://www.gnu.org/licenses/gpl.html>.
 # This is free software: you are free to change and redistribute it.
@@ -14,5 +14,19 @@ class IrProxy::Adapter::Dummy < IrProxy::Adapter::Adapter
 
   def command_for(_)
     nil
+  end
+
+  def call(keyscan)
+    dump(keyscan)
+  end
+
+  protected
+
+  def dump(*dumpables)
+    dumpables.tap { pp(*dumpables) if dump? }
+  end
+
+  def dump?
+    !!config.fetch('dump', false)
   end
 end
