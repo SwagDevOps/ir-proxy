@@ -25,6 +25,10 @@ Commands:
 ## Sample commands
 
 ```sh
+sudo socat - EXEC:'ir-keytable -tc -D 850 -P 250',pty,setsid,ctty | sudo -u $(whoami) ir-proxy pipe
+```
+
+```sh
 sudo socat - EXEC:'ir-keytable -tc',pty | sudo -u $(whoami) ir-proxy pipe
 ```
 
@@ -84,8 +88,7 @@ export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
-(socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | \
-    sudo -nEu "${X_USER}" -- ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
+(socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | sudo -nEu "${X_USER}" -- ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
 ```sh
@@ -100,7 +103,7 @@ sudo systemctl enable ir-proxy.service
   <global>
     <keyboard>
       <f12>ActivateWindow(Home)</f12>
-      <power>ShutDown()</power>
+      <power>ActivateWindow(ShutdownMenu)</power>
     </keyboard>
   </global>
 </keymap>
