@@ -18,7 +18,7 @@ module IrProxy::Cli::Command::Behavior
     config: {
       type: :string,
       desc: 'path to config file',
-      default: IrProxy::Config.default_file,
+      default: IrProxy::Config.default_file.to_s,
     },
     adapter: {
       type: :string,

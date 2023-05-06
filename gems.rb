@@ -15,7 +15,7 @@ group :default do
   gem 'rouge', '~> 3.26'
   gem 'stibium-bundled', '~> 0.0.1', '>= 0.0.4'
   gem 'sys-proc', '~> 1.1'
-  gem 'thor', '~> 0.20'
+  gem 'thor', '~> 1.2'
   gem 'xdg', '>= 2.2', '< 3.0'
 end
 
