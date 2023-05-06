@@ -77,10 +77,30 @@ class IrProxy::Config::File < Pathname
     self.dup.dirname.yield_self do |dir|
       (Pathname.new(filepath).absolute? ? Pathname.new(filepath) : dir.join(filepath)).freeze
     end.yield_self do |file|
-      YAML.safe_load(file.read, [], [], true).yield_self do |parsed|
-        # reject extensions
-        parsed.reject { |k, _| k.to_s =~ /^x-(.+)/ }.to_h
-      end
+      yaml_load_file(file).reject { |k, _| k.to_s =~ /^x-(.+)/ }.to_h # reject extensions
     end
+  end
+end
+
+# Load given file (with ruby version compat, prior to ruby 3)
+#
+# Prior to ruby 3:
+# ```
+# Psych.safe_load(yaml, whitelist_classes = [], whitelist_symbols = [], aliases = false, filename = nil, symbolize_names: false)
+# ```
+# Modern method:
+# ```
+# Psych.safe_load(yaml, permitted_classes: [Date], symbolize_names: false, aliases: true)
+# ```
+#
+# @param [Pathname] file
+#
+# @return [Object]
+# @see https://ruby-doc.org/stdlib-3.0.1/libdoc/psych/rdoc/Psych.html#method-c-safe_load
+def yaml_load_file(file)
+  RUBY_VERSION.split('.').first.to_i.then do |v|
+    return YAML.safe_load(file.read, [], [], true) if v < 3
+
+    YAML.safe_load(file.read, aliases: true)
   end
 end
