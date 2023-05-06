@@ -5,3 +5,6 @@ inherit_gem:
 AllCops:
   NewCops: disable
   SuggestExtensions: false
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns: ['\A#']
