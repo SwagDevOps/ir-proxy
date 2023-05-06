@@ -43,7 +43,7 @@ bundle install --standalone
 sudo socat - EXEC:'ir-keytable -tc',pty | ruby bin/ir-proxy pipe --config config.sample.yml
 ```
 
-## Install "production" only
+## Install ``production`` only
 
 ```shell
 bundle install --standalone --without development test doc repl
@@ -95,7 +95,7 @@ chown "${X_USER}" "${LOGFILE}"
 sudo systemctl enable ir-proxy.service
 ```
 
-## Sample keymap
+## Sample ``kodi`` keymap
 
 ```xml
 <!-- ~/.kodi/userdata/keymaps/ir-proxy.xml -->
@@ -107,6 +107,15 @@ sudo systemctl enable ir-proxy.service
     </keyboard>
   </global>
 </keymap>
+```
+
+## Disable poweroff button
+
+Disable poweroff button (e.g. against occasional pressing on remote)<br />
+edit ``/etc/systemd/logind.conf`` file
+
+```ini
+HandlePowerKey=ignore
 ```
 
 ## Extract available keys to a YAML syntax
@@ -128,6 +137,7 @@ grep -Eo 'KEY_.*' /lib/udev/rc_keymaps/rc6_mce.toml | perl -pe 's/\s+=\s+/: /g' 
 * [XF86 keyboard symbols][wikis/XF86_keyboard_symbols]
 * [List of built-in functions - Official Kodi Wiki][kodi.wiki/built-in_functions]
 * [Window IDs - Official Kodi Wiki][kodi.wiki/window_IDs]
+* [Raspberry Pi4 and kodi as mediacenter](https://medium.com/@stas.berkov/raspberry-pi4-and-kodi-as-mediacenter-b3a2d8b44759)
 
 <!-- hyeprlinks -->
 

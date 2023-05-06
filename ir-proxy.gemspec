@@ -5,8 +5,8 @@
 
 Gem::Specification.new do |s|
   s.name        = "ir-proxy"
-  s.version     = "2.0.0"
-  s.date        = "2022-10-11"
+  s.version     = "2.0.1"
+  s.date        = "2023-05-06"
   s.summary     = "Proxy for ir-keytable"
   s.description = "A simple proxy propagating event seen through ir-keytable"
 
@@ -89,7 +89,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("rouge", ["~> 3.26"])
   s.add_runtime_dependency("stibium-bundled", ["~> 0.0.1", ">= 0.0.4"])
   s.add_runtime_dependency("sys-proc", ["~> 1.1"])
-  s.add_runtime_dependency("thor", ["~> 0.20"])
+  s.add_runtime_dependency("thor", ["~> 1.2"])
   s.add_runtime_dependency("xdg", [">= 2.2", "< 3.0"])
 end
 
