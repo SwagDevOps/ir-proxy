@@ -10,7 +10,7 @@ DELETE: BackSpace
 DOWN: Down
 DVD: null
 EJECTCD: null
-ENTER:  KP_Enter
+ENTER: KP_Enter
 EPG: e
 EXIT: BackSpace
 FASTFORWARD: f # Right
@@ -19,6 +19,7 @@ INFO: i
 LANGUAGE: null
 LEFT: Left
 MEDIA: F12 # flag key
+MENU: c
 MESSENGER:
 MODE: null
 MUTE: XF86AudioMute

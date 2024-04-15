@@ -37,6 +37,7 @@
 0x6f: YELLOW
 0x70: BLUE
 0x76: EXIT
+0x40: MENU
 
 # Additions ------------------------------------------------
 0xbf: SETTINGS
