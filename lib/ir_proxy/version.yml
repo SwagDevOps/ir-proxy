@@ -1,10 +1,10 @@
 ---
 major: 2
 minor: 0
-patch: 1
+patch: 2
 authors: ['Dimitri Arrigoni']
 email: 'dimitri@arrigoni.me'
-date: '2023-05-06'
+date: '2024-04-15'
 # MUST follow the higher required_ruby_version
 # requires version >= 2.3.0 due to safe navigation operator &
 # requires version >= 2.5.0 due to Lint/Syntax: unexpected token kRESCUE
@@ -15,7 +15,7 @@ description: 'A simple proxy propagating event seen through ir-keytable'
 homepage: 'https://github.com/SwagDevOps/ir-proxy'
 licenses: ['GPL-3.0']
 license_header: |
-  Copyright (C) 2019-2021 Dimitri Arrigoni <dimitri@arrigoni.me>
+  Copyright (C) 2019-2024 Dimitri Arrigoni <dimitri@arrigoni.me>
   License GPLv3+: GNU GPL version 3 or later
   <http://www.gnu.org/licenses/gpl.html>.
   This is free software: you are free to change and redistribute it.
