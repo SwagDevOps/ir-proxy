@@ -88,7 +88,7 @@ export XAUTHORITY=$(getent passwd "${X_USER}" | cut -d: -f6)/.Xauthority
 
 touch "${LOGFILE}"
 chown "${X_USER}" "${LOGFILE}"
-(socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | sudo -nEu "${X_USER}" -- ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
+(socat - EXEC:'ir-keytable -tc',pty,setsid,ctty | gosu "${X_USER}" -- ir-proxy pipe --config "${CONFIG}") > "${LOGFILE}" 2>&1
 ```
 
 ```sh
@@ -111,7 +111,7 @@ sudo systemctl enable ir-proxy.service
 
 ## Disable poweroff button
 
-Disable poweroff button (e.g. against occasional pressing on remote)<br />
+Disable poweroff button (power-key is handled by kodi)<br />
 edit ``/etc/systemd/logind.conf`` file
 
 ```ini
