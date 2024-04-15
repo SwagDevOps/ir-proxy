@@ -100,11 +100,9 @@ GEM
       wisper (~> 2.0)
     tty-screen (0.8.1)
     unicode-display_width (2.3.0)
-    webrick (1.7.0)
     wisper (2.0.1)
     xdg (2.2.5)
-    yard (0.9.28)
-      webrick (~> 1.7.0)
+    yard (0.9.36)
     yard-coderay (0.1.0)
       coderay
       yard
