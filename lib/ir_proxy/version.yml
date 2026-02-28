@@ -1,10 +1,10 @@
 ---
 major: 2
-minor: 0
-patch: 3
+minor: 1
+patch: 0
 authors: ['Dimitri Arrigoni']
 email: 'dimitri@arrigoni.me'
-date: '2024-04-15'
+date: '2026-02-28'
 # MUST follow the higher required_ruby_version
 # requires version >= 2.3.0 due to safe navigation operator &
 # requires version >= 2.5.0 due to Lint/Syntax: unexpected token kRESCUE
