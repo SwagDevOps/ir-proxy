@@ -5,8 +5,8 @@
 
 Gem::Specification.new do |s|
   s.name        = "ir-proxy"
-  s.version     = "2.0.3"
-  s.date        = "2024-04-15"
+  s.version     = "2.1.0"
+  s.date        = "2026-02-28"
   s.summary     = "Proxy for ir-keytable"
   s.description = "A simple proxy propagating event seen through ir-keytable"
 
@@ -82,7 +82,6 @@ Gem::Specification.new do |s|
     "lib/ir_proxy/version.yml",
   ]
 
-  s.add_runtime_dependency("chrono_logger", ["~> 1.1"])
   s.add_runtime_dependency("concurrent-ruby", ["~> 1.1"])
   s.add_runtime_dependency("dry-inflector", ["~> 0.2"])
   s.add_runtime_dependency("kamaze-version", ["~> 1.0"])
